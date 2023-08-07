@@ -141,6 +141,9 @@ export class ProgramEntity {
   @JoinColumn([{ name: 'prog_city_id', referencedColumnName: 'cityId' }])
   progCity: City;
 
+  @Column('integer', { name: 'prog_created_by', nullable: true })
+  progCreatedById: number | null;
+
   @ManyToOne(() => Employee, (employee) => employee.programEntities)
   @JoinColumn([
     { name: 'prog_created_by', referencedColumnName: 'empEntityId' },

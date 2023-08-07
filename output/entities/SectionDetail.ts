@@ -24,7 +24,7 @@ export class SectionDetail {
   secdTitle: string | null;
 
   @Column('character', { name: 'secd_preview', nullable: true, length: 1 })
-  secdPreview: string | null;
+  secdPreview: number | null;
 
   @Column('integer', { name: 'secd_score', nullable: true })
   secdScore: number | null;
