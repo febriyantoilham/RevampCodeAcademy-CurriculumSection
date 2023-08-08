@@ -111,3 +111,8 @@ export const GetCatFailed = (payload : any) => ({
     type: ActionCurriculum.GET_CAT_FAILED,
     payload
 })
+
+// Reset
+export const ResetCurriculumState = () => ({
+    type: 'RESET_CURRICULUM_STATE'
+})

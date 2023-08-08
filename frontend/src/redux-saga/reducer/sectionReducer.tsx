@@ -10,18 +10,14 @@ const SectionReducer = (state = INIT_STATE, action: any) => {
             return { ...state };
         case ActionType.GET_SECTION_SUCCESS:
             return GetSection(state, action);
-        // case ActionType.SEARCH_SECTION_REQUEST:
-        //     return { ...state };
-        // case ActionType.SEARCH_SECTION_SUCCESS:
-        //     return SearchSection(state, action);
         case ActionType.ADD_SECTION_REQUEST:
             return { ...state };
         case ActionType.ADD_SECTION_SUCCESS:
             return AddSection(state, action);
-        // case ActionType.EDIT_SECTION_REQUEST:
-        //     return { ...state };
-        // case ActionType.EDIT_SECTION_SUCCESS:
-        //     return EditSection(state, action);
+        case ActionType.UPDATE_SECTION_REQUEST:
+            return { ...state };
+        case ActionType.UPDATE_SECTION_SUCCESS:
+            return UpdateSection(state, action);
         case ActionType.DELETE_SECTION_REQUEST:
             return { ...state };
         case ActionType.DELETE_SECTION_SUCCESS:
@@ -53,7 +49,7 @@ function AddSection(state: any, action: any) {
     };
 }
 
-function EditSection(state: any, action: any) {
+function UpdateSection(state: any, action: any) {
     return {
         ...state,
         section: action.payload,

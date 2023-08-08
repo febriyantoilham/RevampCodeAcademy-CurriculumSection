@@ -8,6 +8,7 @@ import DeleteModal from './deletePage';
 import EditPage from './editPage';
 import ViewProgram from './viewProgramPage';
 import CustomAlert from "@/ui/alert";
+import { useRouter } from 'next/router';
 
 export default function Page() {
   const dispatch = useDispatch();
@@ -24,12 +25,14 @@ export default function Page() {
   const [alertInfo, setAlertInfo] = useState({ showAlert: false, alertText: '', alertType: '' });
 
   const { curriculum } = useSelector((state: any) => state.curriculumState);
+  const { program } = useSelector((state: any) => state.getOneCurriculumState);
+
   const { category, instructor } = useSelector((state: any) => state.categoryCurriculumState);
 
   useEffect(() => {
-    dispatch(GetCurriculumReq({}));
+    dispatch(SearchCurriculumReq({}));
     dispatch(GetCatReq({}));
-    setRefresh(false);
+    // setRefresh(false);
   }, [dispatch, refresh]);
 
   const onSearch = (event: React.FormEvent<HTMLFormElement>) => {
@@ -56,7 +59,6 @@ export default function Page() {
     setSearchValue('');
     setStatus('');
     setStatusLabel('Pilih Status');
-    dispatch(GetCurriculumReq({}));
     setRefresh(true);
   };
 
@@ -116,6 +118,11 @@ export default function Page() {
                         </label>
                         {dropdownStatusOpen && (
                           <ul tabIndex={0} className='dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52'>
+                            <li>
+                              <button type='button' onClick={() => { setStatus(''); setStatusLabel('Semua'); }}>
+                                Semua
+                              </button>
+                            </li>
                             <li>
                               <button type='button' onClick={() => { setStatus('online'); setStatusLabel('Online'); }}>
                                 Online

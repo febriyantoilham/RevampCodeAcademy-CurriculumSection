@@ -105,8 +105,17 @@ export class ProgramEntityService {
       };
     } else {
       const program_entity = await this.serviceProgEntity.find({
+        relations: [
+          'programEntityDescription',
+          'sections',
+          'sections.sectionDetails',
+          'sections.sectionDetails.sectionDetailMaterials',
+        ],
         take: options.limit,
         skip: skippedItems,
+        order: {
+          progEntityId: 'DESC', // Sort by progTitle field in ascending order. Use 'DESC' for descending.
+        },
       });
       return {
         totalCount,

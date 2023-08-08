@@ -1,40 +1,73 @@
+import { UpdateSectionRequest } from "@/redux-saga/action/sectionAction";
+import { useFormik } from "formik";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
-export default function EditSectionPage() {
-    const [modal, setModal] = useState(false);
+export default function EditSectionPage(props: any) {
+    const dispatch = useDispatch();
+    const [view, setview] = useState(true);
 
     function handleChange() {
-        setModal(!modal);
+        setview(!view);
+        props.setview(false)
     }
-    return (
-        <div>
-            <a onClick={handleChange} className="btn btn-primary btn-sm mx-1">view</a>
 
-            <input type="checkbox" checked={modal} onChange={handleChange} className="modal-toggle"/>
-            <div className="modal">
-                <div className="modal-box">
-                <h3 className="font-bold text-lg">
-                    Section
-                </h3>
-                <div className="border-t border-gray-300 my-3"></div>
-                <div>
-                    <form>
-                        <div className="flex flex-col mb-3">
-                            <label htmlFor="progEntityId" className="my-2 mr-5">Section Name</label>
-                            <input type="text" id="progEntityId" placeholder="section name" className="input input-bordered w-full text-base"/>
-                        </div>
-                        <div className="flex flex-col mb-3">
-                            <label htmlFor="progEntityId" className="my-2 mr-5">Section Description</label>
-                            <textarea id="progEntityId" placeholder="section description" className="textarea textarea-bordered h-24 w-full text-base"/>
-                        </div>
-                    </form> 
-                </div>
-                <div className="modal-action">
-                    <button type="button" className="btn" onClick={handleChange}>
-                    Close
-                    </button>
-                </div>
-                </div>
+    const section = props.section
+    const progEntityId = props.progEntityId
+    
+    const formik = useFormik({
+        initialValues: {
+            sectId: section.sectId,
+            sectTitle: section.sectTitle,
+            sectDescription: section.sectDescription,
+        },
+        enableReinitialize: true,
+        onSubmit: async (values: any) => {
+            const data = {
+              sectId: section.sectId,
+              progEntityId: progEntityId,
+              data: {
+                sectTitle: values.sectTitle,
+                sectDescription: values.sectDescription,
+              }
+            }
+
+            // console.log(`Payload: ${JSON.stringify(data)}, progEntityId: ${props.progEntityId}`);
+            
+
+            dispatch(UpdateSectionRequest(data));
+            props.setRefreshView(true);
+            props.setRefreshEdit(true);
+            handleChange();
+            props.setAlertInfo({ showAlert: true, alertText: 'Successfully Update Data!', alertType: 'success'});
+        },
+    });
+
+    return (
+        <div className="">
+            <h3 className="font-bold text-lg">
+                Section (#{section.sectId})
+            </h3>
+            <div className="border-t border-gray-300 my-3"></div>
+            <div>
+                <form action="" onSubmit={formik.handleSubmit}>
+                    <div className="flex flex-col mb-3">
+                        <label htmlFor="sectTitle" className="my-2 mr-5">Section Name</label>
+                        <input type="text" id="sectTitle" placeholder="section name" defaultValue={formik.values.sectTitle} onChange={formik.handleChange} className="input input-bordered w-full text-base"/>
+                    </div>
+                    <div className="flex flex-col mb-3">
+                        <label htmlFor="sectDescription" className="my-2 mr-5">Section Description</label>
+                        <textarea id="sectDescription" placeholder="section description" defaultValue={formik.values.sectDescription} onChange={formik.handleChange} className="textarea textarea-bordered h-24 w-full text-base"/>
+                    </div>
+                    <div className="modal-action">
+                        <button type="button" className="btn" onClick={handleChange}>
+                        Close
+                        </button>
+                        <button type="submit" className="btn btn-primary">
+                        Submit
+                        </button>
+                    </div>
+                </form> 
             </div>
         </div>
     )

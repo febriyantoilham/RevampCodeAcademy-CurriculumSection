@@ -9,99 +9,102 @@ import { EditCurriculumReq } from "@/redux-saga/action/curriculumAction";
 // View
 import CreateSectionPage from "./section/createSectionPage";
 import DeleteSection from "./section/deleteSectionPage";
+import CreateSectionDetailPage from "./section/sectionDetail/createSectionDetailPage";
+import EditSectionDetailPage from "./section/sectionDetail/editSectionDetail";
 
 export default function EditModal(props: any) {
     const dispatch = useDispatch();
     const [modal, setModal] = useState(false);
     const [refresh, setRefresh] = useState(true);
     const [alertInfo, setAlertInfo] = useState({ showAlert: false, alertText: '', alertType: '' });
-    // const { program } = useSelector((state: any) => state.curriculumState);
     const program = props.program;
     const category = props.option.category;
     const instructor = props.option.instructor;
 
-    const [sectId, setSectId] = useState('');
+    // sectionDetailView
+    const [sectDetView, setSectDetView] = useState(false);
+    const [editSectDetView, setEditSectDetView] = useState(false);
 
-    // View
+    // SectionWiev
     const [sectionAddView, setSectionAddView] = useState(false);
+    const [editSectionView, setEditSectionView] = useState(false);
+    const [section, setSection] = useState('');
     const [sectionDeleteView, setSectionDeleteView] = useState(false);
+
 
     function handleChange() {
         setModal(!modal);
     }
 
     useEffect(() => {
-        setRefresh(false);
+        // setRefresh(false);
     }, [refresh]);
 
-    // console.log(`Props: ${JSON.stringify(props.program)}`);
-    // console.log(`Programs: ${JSON.stringify(program)}`);
-    
-
     const formik = useFormik({
-    initialValues: {
-      progHeadline: program?.progHeadline,
-      progTitle: program?.progTitle,
-      progType: program?.progType,
-      progLearningType: program?.progLearningType,
-      progDuration: program?.progDuration,
-      progDurationType: program?.progDurationType,
-      progCateId: program?.progCateId,
-      progLanguage: program?.progLanguage,
-      progPrice: program?.progPrice,
-      progTagSkill: program?.progTagSkill,
-      progCreatedById: program?.progCreatedById,
-      predItemLearning: program?.programEntityDescription?.predItemLearning?.items,
-      predDescription: program?.programEntityDescription?.predDescription?.items,
-    },
-    enableReinitialize: true,
-    onSubmit: async (values: any) => {
-      if (values.progType === '') {
-        setAlertInfo({ showAlert: true, alertText: 'Please Choose Program Type!', alertType: 'error'});
-      } else if (values.progLearningType === '') {
-        setAlertInfo({ showAlert: true, alertText: 'Please Choose Program Learning Type!', alertType: 'error'});
-      } else if (values.progDuration === '' || values.progDuration === 0) {
-        setAlertInfo({ showAlert: true, alertText: 'Duration Cannot be Zero!', alertType: 'error'});
-      } else if (values.progDurationType === '') {
-        setAlertInfo({ showAlert: true, alertText: 'Please Choose Duration Type!', alertType: 'error'});
-      } else if (values.progCateId === '') {
-        setAlertInfo({ showAlert: true, alertText: 'Please Choose Program Category!', alertType: 'error'});
-      } else if (values.progLanguage === '') {
-        setAlertInfo({ showAlert: true, alertText: 'Please Choose Program Language!', alertType: 'error'});
-      } else if (values.progPrice === '' || values.progPrice === 0) {
-        setAlertInfo({ showAlert: true, alertText: 'Price Cannor be Zero!', alertType: 'error'});
-      } else if (values.progCreatedById === '') {
-        setAlertInfo({ showAlert: true, alertText: 'Please Select The Instructor!', alertType: 'error'});
-      } else {
-        const payload = {
-          id: program.progEntityId,
-          data: {
-            progHeadline: values.progHeadline,
-            progTitle: values.progTitle,
-            progType: values.progType,
-            progLearningType: values.progLearningType,
-            progDuration: values.progDuration,
-            progDurationType: values.progDurationType,
-            progCateId: values.progCateId,
-            progLanguage: values.progLanguage,
-            progPrice: values.progPrice,
-            progTagSkill: values.progTagSkill,
-            progCreatedById: values.progCreatedById,
-            predItemLearning: values.predItemLearning,
-            predDescription: values.predDescription,
-          }
+        initialValues: {
+        progHeadline: program?.progHeadline,
+        progTitle: program?.progTitle,
+        progType: program?.progType,
+        progLearningType: program?.progLearningType,
+        progDuration: program?.progDuration,
+        progDurationType: program?.progDurationType,
+        progCateId: program?.progCateId,
+        progLanguage: program?.progLanguage,
+        progPrice: program?.progPrice,
+        progTagSkill: program?.progTagSkill,
+        progCreatedById: program?.progCreatedById,
+        predItemLearning: program?.programEntityDescription?.predItemLearning?.items,
+        predDescription: program?.programEntityDescription?.predDescription?.items,
+        },
+        enableReinitialize: true,
+        onSubmit: async (values: any) => {
+        if (values.progType === '') {
+            setAlertInfo({ showAlert: true, alertText: 'Please Choose Program Type!', alertType: 'error'});
+        } else if (values.progLearningType === '') {
+            setAlertInfo({ showAlert: true, alertText: 'Please Choose Program Learning Type!', alertType: 'error'});
+        } else if (values.progDuration === '' || values.progDuration === 0) {
+            setAlertInfo({ showAlert: true, alertText: 'Duration Cannot be Zero!', alertType: 'error'});
+        } else if (values.progDurationType === '') {
+            setAlertInfo({ showAlert: true, alertText: 'Please Choose Duration Type!', alertType: 'error'});
+        } else if (values.progCateId === '') {
+            setAlertInfo({ showAlert: true, alertText: 'Please Choose Program Category!', alertType: 'error'});
+        } else if (values.progLanguage === '') {
+            setAlertInfo({ showAlert: true, alertText: 'Please Choose Program Language!', alertType: 'error'});
+        } else if (values.progPrice === '' || values.progPrice === 0) {
+            setAlertInfo({ showAlert: true, alertText: 'Price Cannor be Zero!', alertType: 'error'});
+        } else if (values.progCreatedById === '') {
+            setAlertInfo({ showAlert: true, alertText: 'Please Select The Instructor!', alertType: 'error'});
+        } else {
+            const payload = {
+            id: program.progEntityId,
+            data: {
+                progHeadline: values.progHeadline,
+                progTitle: values.progTitle,
+                progType: values.progType,
+                progLearningType: values.progLearningType,
+                progDuration: values.progDuration,
+                progDurationType: values.progDurationType,
+                progCateId: values.progCateId,
+                progLanguage: values.progLanguage,
+                progPrice: values.progPrice,
+                progTagSkill: values.progTagSkill,
+                progCreatedById: values.progCreatedById,
+                predItemLearning: values.predItemLearning,
+                predDescription: values.predDescription,
+            }
+            }
+
+            // console.log(`Payload: ${JSON.stringify(payload)}`);
+
+            dispatch(EditCurriculumReq(payload));
+            props.setAlertInfo({ showAlert: true, alertText: 'Data Successfully Added!', alertType: 'success'});
+            props.setRefresh(true);
+            setRefresh(true);
+            handleChange();
         }
+        },
+    });
 
-        console.log(`Payload: ${JSON.stringify(payload)}`);
-
-        dispatch(EditCurriculumReq(payload));
-        props.setAlertInfo({ showAlert: true, alertText: 'Data Successfully Added!', alertType: 'success'});
-        props.setRefresh(true);
-        setRefresh(true);
-        handleChange();
-      }
-    },
-  });
     if (!program || program.length === 0) {
         return <div>Loading...</div>;
     } else {
@@ -116,8 +119,17 @@ export default function EditModal(props: any) {
                         <CreateSectionPage setAlertInfo={setAlertInfo} setview={setSectionAddView} progId={program.progEntityId} setRefreshView={props.setRefresh} setRefreshEdit={setRefresh}/>
                         ) : sectionDeleteView ?
                         (
-                            <DeleteSection setAlertInfo={setAlertInfo} setview={setSectionDeleteView} progId={program.progEntityId} sectId={sectId} setRefreshView={props.setRefresh} setRefreshEdit={setRefresh}/>
-                        ):(
+                            <DeleteSection setAlertInfo={setAlertInfo} setview={setSectionDeleteView} progId={program.progEntityId} section={section} setRefreshView={props.setRefresh} setRefreshEdit={setRefresh}/>
+                        ) : editSectionView ?
+                        (
+                            <EditSectionPage setAlertInfo={setAlertInfo} setview={setEditSectionView} progEntityId={program.progEntityId} section={section} setRefreshView={props.setRefresh} setRefreshEdit={setRefresh}/>
+                        ) : sectDetView ?
+                        (
+                            <CreateSectionDetailPage setAlertInfo={setAlertInfo} setview={setSectDetView} progEntityId={program.progEntityId} section={section} setRefreshView={props.setRefresh} setRefreshEdit={setRefresh}/>
+                        ) : editSectDetView ?
+                        (
+                            <EditSectionDetailPage setAlertInfo={setAlertInfo} setview={setEditSectDetView} progEntityId={program.progEntityId} section={section} setRefreshView={props.setRefresh} setRefreshEdit={setRefresh}/>
+                        ) : (
                             <div id="Edit Program">
                                 {refresh === false ? (
                                 alertInfo.showAlert && <CustomAlert alertInfo={alertInfo} setAlert={setAlertInfo}/>) : (<></>)}
@@ -226,11 +238,11 @@ export default function EditModal(props: any) {
                                                 <hr className="mt-3 mb-6"/>
                                                 <div className="flex justify-between items-center">
                                                     <p className="p-0 m-0 font-medium text-base uppercase">Materi (Section & Sub Section)</p>
-                                                    <a className="btn btn-primary btn-sm" onClick={ ()=> setSectionAddView(true) }>
+                                                    <a className="btn btn-neutral btn-sm" onClick={ ()=> setSectionAddView(true) }>
                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                         </svg>
-                                                        <span>Add New</span>
+                                                        <span>Add New Section</span>
                                                     </a>
                                                 </div>
                                                 <div className="mt-3">
@@ -241,25 +253,38 @@ export default function EditModal(props: any) {
                                                             <div className="flex justify-between px-5">
                                                                 <div className="text-xl font-medium my-auto">{section.sectTitle}</div>
                                                                 <div className="flex">
-                                                                    <EditSectionPage/>
-                                                                    <button className="btn btn-error btn-sm" onClick={()=>{setSectionDeleteView(true); setSectId(section.sectId)}}>Delete</button>
+                                                                    <a onClick={()=>{setEditSectionView(true); setSection(section);}} className="btn  btn-neutral btn-sm mx-1">view</a>
+                                                                    {section.sectionDetails?.length === 0 ? (<button className="btn btn-error btn-sm" onClick={()=>{setSectionDeleteView(true); setSection(section.sectId)}}>Delete</button>):(<></>)}
                                                                 </div>
                                                             </div>
                                                             <div className="card-body">
                                                                 <div>
                                                                     <div className="border border-gray-300 mb-3"></div>
                                                                     {section.sectionDetails?.length !== 0 ? (
+                                                                    <div className="flex justify-end mb-3">
+                                                                        <a onClick={()=>{setSectDetView(true); setSection(section.sectId);}} className="btn btn-neutral btn-sm">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                            </svg>
+                                                                            <span>Add New Material</span></a>
+                                                                    </div>
+                                                                    ):(<></>)}
+                                                                    {section.sectionDetails?.length !== 0 ? (
                                                                     section.sectionDetails?.map((item: any, index: any) => {
                                                                         return (
                                                                             <>
                                                                                 <div key={item.secdId} className="flex flex-row justify-between my-1">
+                                                                                    <a className="link link-hover" onClick={() => {setEditSectDetView(true); setSection(item);}}>{item.secdTitle}</a>
                                                                                     <div className="text-base">{item.secdMinute} Minutes</div>
                                                                                 </div>
                                                                             </>
                                                                         )
                                                                     })
                                                                     ):(
-                                                                    <div className="text-center">The Section Material are empty, add new!</div>
+                                                                        <div className="flex flex-col gap-3 items-center">
+                                                                            <div className="">The Section Material are empty, create new!</div>
+                                                                            <a onClick={()=>{setSectDetView(true); setSection(section.sectId);}} className="btn  btn-neutral btn-sm mx-1">Create New</a>
+                                                                        </div>
                                                                     )
                                                                     }
                                                                 </div>

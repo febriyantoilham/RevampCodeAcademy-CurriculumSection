@@ -1,6 +1,6 @@
 import { call, put } from "redux-saga/effects";
 import section from "@/api/section";
-import { AddSectionFailed, AddSectionSuccess, DeleteSectionSuccess, GetSectionFailed, GetSectionSuccess } from "../action/sectionAction";
+import { AddSectionFailed, AddSectionSuccess, DeleteSectionSuccess, GetSectionFailed, GetSectionSuccess, UpdateSectionFailed, UpdateSectionSuccess } from "../action/sectionAction";
 
 function* handleGetSection(action: any): any {
     const { payload } = action;
@@ -11,16 +11,6 @@ function* handleGetSection(action: any): any {
         yield put(GetSectionFailed(error))
     }
 }
-
-// function* handleSearchCurriculum(action: any): any {
-//     const { payload } = action;
-//     try {
-//         const result = yield call(curriculum.searchCurriculum, payload)
-//         yield put(SearchCurriculumSuccess(result.data))
-//     } catch (error) {
-//         yield put(SearchCurriculumFailed(error))
-//     }
-// }
 
 function* handleDeleteSection(action: any): any {
     const { payload } = action;
@@ -43,19 +33,17 @@ function* handleAddSection(action: any): any {
     }
 }
 
-// function* handleEditCurriculum(action: any): any {
-//     const {payload} = action;
-//     const id = payload.id;
-//     const data = payload.data
+function* handleUpdateSection(action: any): any {
+    const { payload } = action
 
-//     try {
-//         const result = yield call(curriculum.updateCurriculum, id, data)
-//         yield put(EditCurriculumSuccess(result.data))
-//     } catch (error) {
-//         yield put(EditCurriculumFailed(error))
+    try {
+        const result = yield call(section.updateSection, payload)
+        yield put(UpdateSectionSuccess(result.data))
+    } catch (error) {
+        yield put(UpdateSectionFailed(error))
 
-//     }
-// }
+    }
+}
 
 // function* handleGetCategory(): any {
 //     try {
@@ -70,6 +58,5 @@ export {
     handleGetSection,
     handleDeleteSection,
     handleAddSection,
-    // handleGetCategory,
-    // handleEditCurriculum,
+    handleUpdateSection,
 }

@@ -13,15 +13,18 @@ export default function DeleteSection(props: any) {
       props.setview(false)
   }
 
+  const sectProgEntityId = props.progId
+  const sectId = props.section
+  
   // Handle curriculum deletion
   const onDelete = () => {
-    const payload = {
-      sectProgEntityId: props.progId,
-      sectId: props.sectId
+    const data = {
+      sectProgEntityId: sectProgEntityId,
+      sectId: sectId
     }
-    console.log(JSON.stringify(payload));
+    console.log(JSON.stringify(data));
     
-    dispatch(DeleteSectionRequest(payload))
+    dispatch(DeleteSectionRequest(data))
     props.setRefreshView(true);
     props.setRefreshEdit(true);
     handleChange();
