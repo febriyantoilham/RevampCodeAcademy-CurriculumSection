@@ -25,3 +25,11 @@ export const GET_CAT_FAILED = 'get/cat/failed'
 export const EDIT_DATA_REQ = 'edit/data/request'
 export const EDIT_DATA_SUCCESS = 'edit/data/success'
 export const EDIT_DATA_FAILED = 'edit/data/failed'
+
+export const GET_NEW_ID_REQ = 'get/id/request'
+export const GET_NEW_ID_SUCCESS = 'get/id/success'
+export const GET_NEW_ID_FAILED = 'get/id/failed'
+
+export const DELETE_BUNDLE_DATA_REQ = 'delete/bundle/data/request'
+export const DELETE_BUNDLE_DATA_SUCCESS = 'delete/bundle/data/success'
+export const DELETE_BUNDLE_DATA_FAILED = 'delete/bundle/data/failed'

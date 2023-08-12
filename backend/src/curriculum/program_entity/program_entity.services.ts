@@ -38,7 +38,7 @@ export class ProgramEntityService {
   /* 
     Get all data Program Entity
   */
-  public async findAll(
+  public async getAll(
     options: PaginationOptions,
   ): Promise<ProgramEntityInterface> {
     const skippedItems = (options.page - 1) * options.limit;
@@ -64,6 +64,7 @@ export class ProgramEntityService {
     };
   }
 
+  /* Search */
   public async search(
     options: PaginationOptions,
   ): Promise<ProgramEntityInterface> {
@@ -126,17 +127,34 @@ export class ProgramEntityService {
     }
   }
 
+  /* Get New progEntityId */
+  public async getNewProgEntityId() {
+    const sequenceName = 'curriculum.program_entity_prog_entity_id_seq';
+
+    const query = `
+      SELECT SETVAL('${sequenceName}', MAX(prog_entity_id))
+      FROM curriculum.program_entity;
+    `;
+
+    const currVal = await this.serviceProgEntity.query(query);
+
+    const newProgEntityId = parseInt(currVal[0].setval) + 1;
+
+    return newProgEntityId;
+  }
+
   /* 
     Create data Program Entity
     Include table:
       program_entity,
       program_entity_description,
   */
-  public async create(file: any, fields: any) {
+  public async create(fields: any, file: any) {
     try {
       console.log(`Payload: ${JSON.stringify(fields)}`);
       // Insert ke Table program_entity
-      const progEnt = await this.serviceProgEntity.save({
+
+      const updateData = {
         progHeadline: fields.progHeadline,
         progTitle: fields.progTitle,
         progType: fields.progType,
@@ -144,7 +162,6 @@ export class ProgramEntityService {
         progRating: fields.progRating,
         progTotalTrainee: fields.progTotalTrainee,
         progModifiedDate: new Date(),
-        progImage: file.originalname,
         progBestSeller: fields.progBestSeller,
         progPrice: fields.progPrice,
         progLanguage: fields.progLanguage,
@@ -155,7 +172,11 @@ export class ProgramEntityService {
         progCateId: fields.progCateId,
         progCreatedById: fields.progCreatedById, // belum di ada function cek employee instructor apa bukan
         progStatus: fields.progStatus,
-      });
+      };
+
+      const progEnt = await this.serviceProgEntity.save(
+        file ? { ...updateData, progImage: file.originalname } : updateData,
+      );
 
       // Insert ke Table program_entity_description
       await this.serviceProgEntDesc.save({
@@ -171,30 +192,6 @@ export class ProgramEntityService {
       return result;
     } catch (error) {
       return error.message;
-    }
-  }
-
-  public async findOne(id: number) {
-    const progEntity = await this.serviceProgEntity.findOne({
-      where: { progEntityId: id },
-      relations: [
-        'programEntityDescription',
-        'sections',
-        'sections.sectionDetails',
-        'sections.sectionDetails.sectionDetailMaterials',
-      ],
-    });
-    return progEntity;
-  }
-
-  public async getImage(imageName: any, res: any) {
-    const imagePath = path.join(process.cwd(), 'uploads', imageName);
-    try {
-      const image = fs.readFileSync(imagePath);
-      res.setHeader('Content-Type', 'image/jpeg');
-      res.end(image);
-    } catch (error) {
-      res.status(404).end();
     }
   }
 
@@ -262,6 +259,30 @@ export class ProgramEntityService {
     }
   }
 
+  public async findOne(id: number) {
+    const progEntity = await this.serviceProgEntity.findOne({
+      where: { progEntityId: id },
+      relations: [
+        'programEntityDescription',
+        'sections',
+        'sections.sectionDetails',
+        'sections.sectionDetails.sectionDetailMaterials',
+      ],
+    });
+    return progEntity;
+  }
+
+  public async getLogo(imageName: any, res: any) {
+    const imagePath = path.join(process.cwd(), 'uploads', imageName);
+    try {
+      const image = fs.readFileSync(imagePath);
+      res.setHeader('Content-Type', 'image/jpeg');
+      res.end(image);
+    } catch (error) {
+      res.status(404).end();
+    }
+  }
+
   public async Delete(id: number) {
     try {
       const section = await this.serviceSec.find({
@@ -281,6 +302,53 @@ export class ProgramEntityService {
       }
       await this.serviceProgEntDesc.delete(id);
       await this.serviceProgEntity.delete(id);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  public async DeleteBundle(fields: any) {
+    try {
+      console.log(`Payload: ${JSON.stringify(fields)}`);
+      for (const id of fields) {
+        const program = await this.serviceProgEntity.findOne({
+          where: { progEntityId: id },
+        });
+
+        const prog_description = await this.serviceProgEntDesc.findOne({
+          where: { predProgEntityId: id },
+        });
+
+        const section = await this.serviceSec.find({
+          where: { sectProgEntityId: id },
+          relations: ['sectionDetails'],
+        });
+
+        for (const item of section) {
+          if (item.sectionDetails.length !== 0) {
+            for (const itemDetail of item.sectionDetails) {
+              const sectDet = await this.serviceSecDet.find({
+                where: { secdId: itemDetail.secdId },
+                relations: ['sectionDetailMaterials'],
+              });
+              for (const itemMaterial of sectDet) {
+                if (itemMaterial.sectionDetailMaterials) {
+                  const sectDetMat = await this.serviceSecDetMat.findOne({
+                    where: { sedmSecdid: itemMaterial.secdId },
+                  });
+                  await this.serviceSecDetMat.remove(sectDetMat);
+                }
+              }
+              await this.serviceSecDet.remove(sectDet);
+            }
+          }
+          await this.serviceSec.remove(section);
+        }
+        await this.serviceProgEntDesc.remove(prog_description);
+        await this.serviceProgEntity.remove(program);
+      }
+
       return { success: true };
     } catch (error) {
       return { success: false, error: error.message };

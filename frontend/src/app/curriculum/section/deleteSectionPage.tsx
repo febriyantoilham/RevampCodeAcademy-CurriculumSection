@@ -10,7 +10,7 @@ export default function DeleteSection(props: any) {
 
   function handleChange() {
       setview(!view);
-      props.setview(false)
+      props.setview()
   }
 
   const sectProgEntityId = props.progId
@@ -22,13 +22,11 @@ export default function DeleteSection(props: any) {
       sectProgEntityId: sectProgEntityId,
       sectId: sectId
     }
-    console.log(JSON.stringify(data));
-    
+
     dispatch(DeleteSectionRequest(data))
-    props.setRefreshView(true);
-    props.setRefreshEdit(true);
+    props.refreshPage(true);
+    props.refreshForm(true);
     handleChange();
-    props.setAlertInfo({ showAlert: true, alertText: 'Data Successfully Deleted!', alertType: 'success'});
   };
 
   return (

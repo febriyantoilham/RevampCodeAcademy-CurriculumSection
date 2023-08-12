@@ -48,6 +48,21 @@ export const GetOneCurriculumFailed = (payload : any) => ({
     payload
 })
 
+// Get New Id
+export const GetNewIdReq = () => ({
+    type: ActionCurriculum.GET_NEW_ID_REQ,
+})
+
+export const GetNewIdSuccess = (payload : any) => ({
+    type: ActionCurriculum.GET_NEW_ID_SUCCESS,
+    payload
+})
+
+export const GetNewIdFailed = (payload : any) => ({
+    type: ActionCurriculum.GET_NEW_ID_FAILED,
+    payload
+})
+
 // Add
 export const AddCurriculumReq = (payload : any) => ({
     type: ActionCurriculum.ADD_DATA_REQ,
@@ -93,6 +108,22 @@ export const DeleteCurriculumSuccess = (payload : any) => ({
 
 export const DeleteCurriculumFailed = (payload : any) => ({
     type: ActionCurriculum.DELETE_DATA_FAILED,
+    payload
+})
+
+// Delete Bundle
+export const DeleteBundleCurriculumReq = (payload : any) => ({
+    type: ActionCurriculum.DELETE_BUNDLE_DATA_REQ,
+    payload
+})
+
+export const DeleteBundleCurriculumSuccess = (payload : any) => ({
+    type: ActionCurriculum.DELETE_BUNDLE_DATA_SUCCESS,
+    payload
+})
+
+export const DeleteBundleCurriculumFailed = (payload : any) => ({
+    type: ActionCurriculum.DELETE_BUNDLE_DATA_FAILED,
     payload
 })
 

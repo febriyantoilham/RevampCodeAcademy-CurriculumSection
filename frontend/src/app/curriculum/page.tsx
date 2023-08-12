@@ -1,38 +1,53 @@
 "use client"
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { GetCatReq, GetCurriculumReq, SearchCurriculumReq } from '@/redux-saga/action/curriculumAction';
+import { DeleteBundleCurriculumReq, GetCatReq, GetCurriculumReq, GetNewIdReq, SearchCurriculumReq } from '@/redux-saga/action/curriculumAction';
 import Link from 'next/link';
-import CreatePage from './createPage';
+import CreatePage from './createPage/createPage';
 import DeleteModal from './deletePage';
-import EditPage from './editPage';
 import ViewProgram from './viewProgramPage';
+import EditPage from './editPage/editPage';
 import CustomAlert from "@/ui/alert";
 import { useRouter } from 'next/router';
 
 export default function Page() {
+  // Dispatch
   const dispatch = useDispatch();
+
+  // Set Refresh
   const [refresh, setRefresh] = useState(false);
-  const [viewProgRefresh, setViewProgRefresh] = useState(false);
+  
+  // Search Config
   const [searchValue, setSearchValue] = useState('');
   const [status, setStatus] = useState('');
   const [statusLabel, setStatusLabel] = useState('Pilih Status');
-  const [createDisplay, setCreateDisplay] = useState(false);
-  const [editDisplay, setEditDisplay] = useState(false);
-  const [searchDisplay, setSearchDisplay] = useState(false);
-  const [progId, setProgId] = useState('');
   const [dropdownStatusOpen, setDropdownStatusOpen] = useState(false);
+  
+  // Display Create
+  const [createDisplay, setCreateDisplay] = useState(false);
+
+  // Display Edit
+  const [editDisplay, setEditDisplay] = useState(false);
+  const [progId, setProgId] = useState('');
+
+  // Display Search
+  const [searchDisplay, setSearchDisplay] = useState(false);
+
+  // Alert Config
   const [alertInfo, setAlertInfo] = useState({ showAlert: false, alertText: '', alertType: '' });
 
+  // Data State
   const { curriculum } = useSelector((state: any) => state.curriculumState);
-  const { program } = useSelector((state: any) => state.getOneCurriculumState);
-
   const { category, instructor } = useSelector((state: any) => state.categoryCurriculumState);
+
+  // Select Program
+  const [selectedItem, setSelectedItem] = useState<any[]>([]);
+  const [selectAll, setSelectedAll] = useState(false);
 
   useEffect(() => {
     dispatch(SearchCurriculumReq({}));
     dispatch(GetCatReq({}));
-    // setRefresh(false);
+    setRefresh(false);
   }, [dispatch, refresh]);
 
   const onSearch = (event: React.FormEvent<HTMLFormElement>) => {
@@ -59,7 +74,9 @@ export default function Page() {
     setSearchValue('');
     setStatus('');
     setStatusLabel('Pilih Status');
+    setSelectedItem([]);
     setRefresh(true);
+    setSelectedAll(false);
   };
 
   const onClick = (page: number) => {
@@ -75,13 +92,43 @@ export default function Page() {
     }
   };
 
+  const handleSelectedItem = (progEntityId: any) => {
+    if (selectedItem.includes(progEntityId)) {
+      setSelectedItem(selectedItem.filter(id => id !== progEntityId));
+      setSelectedAll(false);
+    } else {
+      setSelectedItem([...selectedItem, progEntityId]);
+    }
+  };
+
+  const handleSelectAll = () => {
+    if (selectAll){
+    } else {
+      setSelectedItem([]);
+      const allItems = curriculum.data.map((program:any) => program.progEntityId);
+      setSelectedItem(allItems);
+    }
+    setSelectedAll(!selectAll);
+  }
+
+  const onDeleteBundle = async () => {
+    try {
+      dispatch(DeleteBundleCurriculumReq(selectedItem));
+      setSelectedItem([]);
+      setSelectedAll(false);
+      setRefresh(true);
+    } catch (error) {
+      console.error('Error deleting bundle:', error);
+    }
+  }
+
   return (
     <div className='py-10 px-10 bg-base-100'>
       <>
         {createDisplay ? (
-          <CreatePage setDisplay={setCreateDisplay} setRefresh={setRefresh} category={category} instructor={instructor} setAlertInfo={setAlertInfo}/>
-        ) : editDisplay ? (
-          <ViewProgram setDisplay={setEditDisplay} setRefresh={setRefresh} progId={progId} setAlertInfo={setAlertInfo} handleRefresh={handleRefresh}/>
+          <CreatePage setDisplay={setCreateDisplay} setRefresh={setRefresh} setAlertInfo={setAlertInfo} setEditDisplay={setEditDisplay} setProgId={setProgId}/>
+        ) : editDisplay ? ( !refresh &&
+          <EditPage setDisplay={setEditDisplay} setRefresh={setRefresh} progEntityId={progId} setAlertInfo={setAlertInfo} handleRefresh={handleRefresh}/>
         ) : (
           <>
             <div className=''>
@@ -99,6 +146,16 @@ export default function Page() {
 
               <div className='py-5'>
                 <div className='grid grid-cols-6'>
+                  {selectedItem.length !== 0 ? 
+                  (<>
+                    <div className='col-span-1 flex justify-start'>
+                      <button className='btn btn-error btn-circle' onClick={onDeleteBundle}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>
+                      </button>
+                    </div>
+                  </>):(<></>)}
                   <div className='col-start-2 col-span-4'>
                     <form onSubmit={onSearch} className='w-full flex justify-center'>
                       <label htmlFor='searchInput' className='my-auto mr-5 font-medium capitalize'>
@@ -152,21 +209,20 @@ export default function Page() {
               </div>
 
               <div className='overflow-x-auto'>
-                <table className='table'>
+                <table className='table table-md'>
                   <thead>
                     <tr>
                       <th>
                         <label>
-                          <input type="checkbox" className="checkbox" />
+                          <input type="checkbox" onChange={handleSelectAll} checked={selectAll} className="checkbox" />
                         </label>
                       </th>
-                      <th>#</th>
-                      <th>NAME</th>
-                      <th>TITLE</th>
-                      <th>DURATION</th>
-                      <th>TOTAL</th>
-                      <th>TYPE</th>
-                      <th>RATING</th>
+                      <th className='text-center'>#</th>
+                      <th className=''>PROGRAM</th>
+                      <th className='text-center'>DURATION</th>
+                      <th className='text-center'>TOTAL</th>
+                      <th className=''>TYPE</th>
+                      <th className='text-center'>RATING</th>
                       <th></th>
                     </tr>
                   </thead>
@@ -175,12 +231,16 @@ export default function Page() {
                       <tr key={program.progEntityId}>
                         <td>
                           <label>
-                            <input type="checkbox" className="checkbox" />
+                            <input type="checkbox" onChange={() => handleSelectedItem(program.progEntityId)} checked={selectedItem.includes(program.progEntityId)} className="checkbox" />
                           </label>
                         </td>
                         <td className='capitalize text-center'>{program.progEntityId}</td>
-                        <td className='capitalize'>{program.progTitle}</td>
-                        <td className='capitalize'>{program.progHeadline}</td>
+                        <td className='capitalize'>
+                          <div className='flex flex-col'>
+                            <div className='font-medium'>{program.progTitle}</div>
+                            <div className='text-gray-500'>{program.progHeadline}</div>
+                          </div>
+                        </td>
                         <td className='capitalize text-center'>
                           {program.progDuration === '' || program.progDuration === null ? (<>-</>):(`${program.progDuration} ${program.progDurationType}`)}
                         </td>
@@ -188,10 +248,9 @@ export default function Page() {
                         <td className='capitalize'>{program.progLearningType}</td>
                         <td className='text-center'>{program.progRating === '' || program.progRating === null ? (<>-</>):(`${program.progRating}`)}</td>
                         <td className=''>
-                          <button className="btn btn-active btn-sm" onClick={() => {setEditDisplay(true); setProgId(program.progEntityId)}}>
-                            See Details
+                          <button className="btn btn-ghost btn-sm" onClick={() => {setEditDisplay(true); setProgId(program.progEntityId)}}>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
                           </button>
-                          {/* <DeleteModal program={program} setRefresh={setRefresh}/> */}
                         </td>
                       </tr>
                     ))}

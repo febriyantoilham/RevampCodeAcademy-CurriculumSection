@@ -16,6 +16,9 @@ import { SectionDetailController } from 'src/curriculum/section_detail/sectionde
 import { Category } from 'output/entities/Category';
 import { Employee } from 'output/entities/Employee';
 import { Users } from 'output/entities/Users';
+import { BusinessEntityController } from 'src/master/bussiness_entity/business_entity.controller';
+import { BusinessEntityService } from 'src/master/bussiness_entity/business_entity.services';
+import { BusinessEntity } from 'output/entities/BusinessEntity';
 
 @Module({
   imports: [
@@ -28,14 +31,21 @@ import { Users } from 'output/entities/Users';
       Category,
       Employee,
       Users,
+      BusinessEntity,
     ]),
     MulterModule.register(UploadMulter.MulterOption()),
   ],
-  providers: [ProgramEntityService, SectionService, SectionDetailService],
+  providers: [
+    ProgramEntityService,
+    SectionService,
+    SectionDetailService,
+    BusinessEntityService,
+  ],
   controllers: [
     ProgramEntityController,
     SectionController,
     SectionDetailController,
+    BusinessEntityController,
   ],
 })
 export class GlobalModule {}

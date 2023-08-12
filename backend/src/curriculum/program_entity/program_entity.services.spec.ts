@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ProgramEntityService } from './program_entity.services';
+import { ProgramEntityService } from './ProgramEntityService';
 
 describe('ProgramEntityService', () => {
   let service: ProgramEntityService;

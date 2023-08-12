@@ -1,5 +1,5 @@
 import { call, put } from "redux-saga/effects";
-import { AddCurriculumFailed, AddCurriculumSuccess, DeleteCurriculumSuccess, EditCurriculumFailed, EditCurriculumReq, EditCurriculumSuccess, GetCatFailed, GetCatSuccess, GetCurriculumFailed, GetCurriculumSuccess, GetOneCurriculumFailed, GetOneCurriculumSuccess, SearchCurriculumFailed, SearchCurriculumSuccess } from "../action/curriculumAction";
+import { AddCurriculumFailed, AddCurriculumSuccess, DeleteBundleCurriculumFailed, DeleteBundleCurriculumSuccess, DeleteCurriculumSuccess, EditCurriculumFailed, EditCurriculumReq, EditCurriculumSuccess, GetCatFailed, GetCatSuccess, GetCurriculumFailed, GetCurriculumSuccess, GetNewIdFailed, GetNewIdSuccess, GetOneCurriculumFailed, GetOneCurriculumSuccess, SearchCurriculumFailed, SearchCurriculumSuccess } from "../action/curriculumAction";
 import curriculum from "@/api/curriculum";
 
 function* handleGetCurriculum(action: any): any {
@@ -9,6 +9,15 @@ function* handleGetCurriculum(action: any): any {
         yield put(GetCurriculumSuccess(result.data))
     } catch (error) {
         yield put(GetCurriculumFailed(error))
+    }
+}
+
+function* handleGetNewProgramId(): any {
+    try {
+        const result = yield call(curriculum.getNewProgEntityId)
+        yield put(GetNewIdSuccess(result.data))
+    } catch (error) {
+        yield put(GetNewIdFailed(error))
     }
 }
 
@@ -39,6 +48,16 @@ function* handleDeleteCurriculum(action: any): any {
         yield put(DeleteCurriculumSuccess(result))
     } catch (error) {
         yield put(SearchCurriculumFailed(error))
+    }
+}
+
+function* handleDeleteBundleCurriculum(action: any): any {
+    const { payload } = action;
+    try {
+        const result = yield call(curriculum.deleteBundleCurriculum, payload)
+        yield put(DeleteBundleCurriculumSuccess(result))
+    } catch (error) {
+        yield put(DeleteBundleCurriculumFailed(error))
     }
 }
 
@@ -75,9 +94,11 @@ function* handleGetCategory(): any {
 
 export {
     handleGetCurriculum,
+    handleGetNewProgramId,
     handleGetOneCurriculum,
     handleSearchCurriculum,
     handleDeleteCurriculum,
+    handleDeleteBundleCurriculum,
     handleCreateCurriculum,
     handleGetCategory,
     handleEditCurriculum,

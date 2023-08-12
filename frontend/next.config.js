@@ -4,13 +4,13 @@ const nextConfig = {
         domains: ['localhost']
     },
 
-    daisyui: {
-        themes: ["light", "dark", "emerald"],
-    },
+    // daisyui: {
+    //     themes: ["light", "dark", "emerald"],
+    // },
     
-    plugins: [
-        require('daisyui'),
-    ],
+    // plugins: [
+    //     require('daisyui'),
+    // ],
 }
 
 module.exports = nextConfig

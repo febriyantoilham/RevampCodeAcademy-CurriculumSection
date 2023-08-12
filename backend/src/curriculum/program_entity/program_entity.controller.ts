@@ -15,26 +15,38 @@ import { ProgramEntityService } from './program_entity.services';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PaginationDto } from 'src/curriculum/dto/pagination.dto';
 
-@Controller('curriculum')
+@Controller('program_entity')
 export class ProgramEntityController {
   constructor(private Service: ProgramEntityService) {}
 
+  /* Get All Program */
   @Get('paging')
   public async getAll(@Query() options: PaginationDto) {
-    const room = this.Service.findAll(options);
+    const room = this.Service.getAll(options);
     return room;
   }
 
+  /* Search Program */
   @Get('search')
   public async search(@Query() options: PaginationDto) {
     const room = this.Service.search(options);
     return room;
   }
 
+  /* Get New progEntityId */
+  @Get('getNewProgEntityId')
+  public async getNewProgEntityId() {
+    return this.Service.getNewProgEntityId();
+  }
+
+  /* 
+    Create Program Entity
+    Upload Logo (Optional)
+  */
   @Post('create')
   @UseInterceptors(FileInterceptor('file'))
-  public async Create(@UploadedFile() file: any, @Body() fields: any) {
-    return this.Service.create(file, fields);
+  public async Create(@Body() fields: any, @UploadedFile() file?: any) {
+    return this.Service.create(fields, file);
   }
 
   @Get('view/proentityid/:id')
@@ -42,9 +54,9 @@ export class ProgramEntityController {
     return this.Service.findOne(id);
   }
 
-  @Get('getImage/:imageName')
-  public async getImage(@Param('imageName') imageName: any, @Res() res: any) {
-    return this.Service.getImage(imageName, res);
+  @Get('getLogo/:imageName')
+  public async getLogo(@Param('imageName') imageName: any, @Res() res: any) {
+    return this.Service.getLogo(imageName, res);
   }
 
   @Put('update/:id')
@@ -60,6 +72,11 @@ export class ProgramEntityController {
   @Delete('delete/:id')
   public async Delete(@Param('id') id: number) {
     return this.Service.Delete(id);
+  }
+
+  @Delete('delete_bundle')
+  public async DeleteBundle(@Body() fields: any) {
+    return this.Service.DeleteBundle(fields);
   }
 
   @Get('cat')

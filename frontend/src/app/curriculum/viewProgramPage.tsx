@@ -18,7 +18,7 @@ export default function ViewProgram(props: any) {
   const [imageExists, setImageExists] = useState(true);
   const [changeImage, setChangeImage] = useState(false);
   
-  const { program } = useSelector((state: any) => state.getOneCurriculumState);
+  const { program } = useSelector((state: any) => state.programEntityState);
   const { category, instructor } = useSelector((state: any) => state.categoryCurriculumState);
 
   useEffect(() => {

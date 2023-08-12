@@ -1,12 +1,13 @@
 import { combineReducers } from "redux";
-import { CurriculumReducer, getOneCurriculumReducer } from "./curriculumReducer";
+import CurriculumReducer from "./curriculumReducer";
+import programEntityReducer from "./programEntity/programEntityReducer";
 import CategoryReducer from "./categoryReducer";
 import SectionReducer from "./sectionReducer";
 import SectionDetailReducer from "./sectionDetailReducer";
 
 const rootReducer = combineReducers({
     curriculumState: CurriculumReducer,
-    getOneCurriculumState: getOneCurriculumReducer,
+    programEntityState: programEntityReducer,
     categoryCurriculumState: CategoryReducer,
     sectionState: SectionReducer,
     sectionDetailReducer: SectionDetailReducer,
