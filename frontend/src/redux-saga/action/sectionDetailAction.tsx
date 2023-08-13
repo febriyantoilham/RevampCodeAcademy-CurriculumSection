@@ -1,34 +1,50 @@
 import * as Action from '../constant/sectionDetailConstant'
 
-// Get
-export const GetSectionDetailRequest = (payload : any) => ({
-    type: Action.GET_SECTION_DETAIL_REQUEST,
+// Create
+export const CreateSectionDetailRequest = (payload : any) => ({
+    type: Action.CREATE_SECTION_DETAIL_REQUEST,
     payload
 })
 
-export const GetSectionDetailSuccess = (payload : any) => ({
-    type: Action.GET_SECTION_DETAIL_SUCCESS,
+export const CreateSectionDetailSuccess = (payload : any) => ({
+    type: Action.CREATE_SECTION_DETAIL_SUCCESS,
     payload
 })
 
-export const GetSectionDetailFailed = (payload : any) => ({
-    type: Action.GET_SECTION_DETAIL_FAILED,
+export const CreateSectionDetailFailed = (payload : any) => ({
+    type: Action.CREATE_SECTION_DETAIL_FAILED,
     payload
 })
 
-// Add
-export const AddSectionDetailRequest = (payload : any) => ({
-    type: Action.ADD_SECTION_DETAIL_REQUEST,
+// Get One
+export const GetOneSectionDetailRequest = (payload : any) => ({
+    type: Action.GET_ONE_SECTION_DETAIL_REQUEST,
     payload
 })
 
-export const AddSectionDetailSuccess = (payload : any) => ({
-    type: Action.ADD_SECTION_DETAIL_SUCCESS,
+export const GetOneSectionDetailSuccess = (payload : any) => ({
+    type: Action.GET_ONE_SECTION_DETAIL_SUCCESS,
     payload
 })
 
-export const AddSectionDetailFailed = (payload : any) => ({
-    type: Action.ADD_SECTION_DETAIL_FAILED,
+export const GetOneSectionDetailFailed = (payload : any) => ({
+    type: Action.GET_ONE_SECTION_DETAIL_FAILED,
+    payload
+})
+
+// Get All
+export const GetAllSectionDetailRequest = (payload : any) => ({
+    type: Action.GET_ALL_SECTION_DETAIL_REQUEST,
+    payload
+})
+
+export const GetAllSectionDetailSuccess = (payload : any) => ({
+    type: Action.GET_ALL_SECTION_DETAIL_SUCCESS,
+    payload
+})
+
+export const GetAllSectionDetailFailed = (payload : any) => ({
+    type: Action.GET_ALL_SECTION_DETAIL_FAILED,
     payload
 })
 
@@ -49,17 +65,17 @@ export const UpdateSectionDetailFailed = (payload : any) => ({
 })
 
 // Delete
-export const DeleteSectionDetailRequest = (payload : any) => ({
-    type: Action.DELETE_SECTION_DETAIL_REQUEST,
+export const DeleteOneSectionDetailRequest = (payload : any) => ({
+    type: Action.DELETE_ONE_SECTION_DETAIL_REQUEST,
     payload
 })
 
-export const DeleteSectionDetailSuccess = (payload : any) => ({
-    type: Action.DELETE_SECTION_DETAIL_SUCCESS,
+export const DeleteOneSectionDetailSuccess = (payload : any) => ({
+    type: Action.DELETE_ONE_SECTION_DETAIL_SUCCESS,
     payload
 })
 
-export const DeleteSectionDetailFailed = (payload : any) => ({
-    type: Action.DELETE_SECTION_DETAIL_FAILED,
+export const DeleteOneSectionDetailFailed = (payload : any) => ({
+    type: Action.DELETE_ONE_SECTION_DETAIL_FAILED,
     payload
 })

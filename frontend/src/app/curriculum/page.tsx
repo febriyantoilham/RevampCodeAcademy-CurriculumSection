@@ -4,11 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DeleteBundleCurriculumReq, GetCatReq, GetCurriculumReq, GetNewIdReq, SearchCurriculumReq } from '@/redux-saga/action/curriculumAction';
 import Link from 'next/link';
 import CreatePage from './createPage/createPage';
-import DeleteModal from './deletePage';
-import ViewProgram from './viewProgramPage';
-import EditPage from './editPage/editPage';
+import ViewProgram from './viewPage/ViewProgram';
 import CustomAlert from "@/ui/alert";
-import { useRouter } from 'next/router';
 
 export default function Page() {
   // Dispatch
@@ -27,7 +24,7 @@ export default function Page() {
   const [createDisplay, setCreateDisplay] = useState(false);
 
   // Display Edit
-  const [editDisplay, setEditDisplay] = useState(false);
+  const [viewDisplay, setViewDisplay] = useState(false);
   const [progId, setProgId] = useState('');
 
   // Display Search
@@ -126,16 +123,16 @@ export default function Page() {
     <div className='py-10 px-10 bg-base-100'>
       <>
         {createDisplay ? (
-          <CreatePage setDisplay={setCreateDisplay} setRefresh={setRefresh} setAlertInfo={setAlertInfo} setEditDisplay={setEditDisplay} setProgId={setProgId}/>
-        ) : editDisplay ? ( !refresh &&
-          <EditPage setDisplay={setEditDisplay} setRefresh={setRefresh} progEntityId={progId} setAlertInfo={setAlertInfo} handleRefresh={handleRefresh}/>
+          <CreatePage setDisplay={setCreateDisplay} setAlertInfo={setAlertInfo} handleRefresh={handleRefresh}/>
+        ) : viewDisplay ? ( !refresh &&
+          <ViewProgram setDisplay={setViewDisplay} setAlertInfo={setAlertInfo} handleRefresh={handleRefresh} progEntityId={progId}/>
         ) : (
           <>
             <div className=''>
               <div className='py-2'>
                 {alertInfo.showAlert && <CustomAlert alertInfo={alertInfo} setAlert={setAlertInfo}/>}
                 <div className='grid grid-cols-2 gap-4'>
-                  <div className='flex justify-start font-extrabold uppercase text-xl my-auto text-gray-950'>Curriculum</div>
+                  <div className='flex justify-start text-xl font-bold'>Curriculum</div>
                   <div className='flex justify-end'>
                     <button className='btn btn-primary my-auto ' onClick={() => setCreateDisplay(true)}>
                       Create Curriculum
@@ -248,7 +245,7 @@ export default function Page() {
                         <td className='capitalize'>{program.progLearningType}</td>
                         <td className='text-center'>{program.progRating === '' || program.progRating === null ? (<>-</>):(`${program.progRating}`)}</td>
                         <td className=''>
-                          <button className="btn btn-ghost btn-sm" onClick={() => {setEditDisplay(true); setProgId(program.progEntityId)}}>
+                          <button className="btn btn-ghost btn-sm" onClick={() => {setViewDisplay(true); setProgId(program.progEntityId)}}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
                           </button>
                         </td>

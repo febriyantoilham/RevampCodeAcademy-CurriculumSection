@@ -1,51 +1,60 @@
 import axios from "axios";
 import config from "@/config/config";
 
-// const getSectionDetail = async (payload: any) => {
-//     try {
-//         const result = await axios.get(`${config.domain}/curriculum/section/get/${payload}`);
-//         return result;
-//     } catch (error) {
-//         return error;
-//     }
-// }
-
-// const deleteSection = async (payload: any) => {
-//     const {sectProgEntityId, sectId} = payload
-//     try {
-//         await axios.delete(`${config.domain}/curriculum/section/delete/${sectProgEntityId}/${sectId}`);
-//         return payload;
-//     } catch (error) {
-//         return error;
-//     }
-// }
-
-const createSectionDetail = async (data: any) => {
-    const sectProgEntityId = data.sectProgEntityId;
-    const sectId = data.sectId;
-    const payload = data.data
+const createSectionDetail = async (payload: any) => {
     try {
-        console.log(`sectProgEntityId: ${sectProgEntityId}, sectId: ${sectId}, payload: ${payload}`);
-        
-        const result = await axios.post(`${config.domain}/curriculum/subsection/create/${sectProgEntityId}/${sectId}`, payload);
+        const result = await axios.post(`${config.domain}/program_entity/subsection/create`, payload);
         return result;
     } catch (error) {
         return error;
     }
 }
 
-// const updateSection = async (data: any) => {
-//     const sectId = data.sectId;
-//     const sectProgEntityId = data.progEntityId;
-//     const payload = data.data;
+const getOneSectionDetail = async (payload: any) => {
+    try {
+        const result = await axios.get(`${config.domain}/program_entity/subsection/get/one/${payload}`);
+        return result;
+    } catch (error) {
+        return error;
+    }
+}
+
+const getAllSectionDetail = async (payload: any) => {
+    try {
+        const result = await axios.get(`${config.domain}/program_entity/subsection/get/all/${payload}`);
+        return result;
+    } catch (error) {
+        return error;
+    }
+}
+
+const deleteOneSectionDetail = async (payload: any) => {
+    try {
+        await axios.delete(`${config.domain}/program_entity/subsection/delete/one/${payload}`);
+        return payload;
+    } catch (error) {
+        return error;
+    }
+}
+
+
+const updateSectionDetail = async (data: any) => {
+    const secdId = data.secdId;
+    const payload = data.data;
     
-//     try {
-//         const result = await axios.put(`${config.domain}/curriculum/section/update/${sectProgEntityId}/${sectId}`, payload);
-//         return result;
-//     } catch (error) {
-//         return error;
-//     }
-// }
+    try {
+        const result = await axios.put(`${config.domain}/program_entity/subsection/update/${secdId}`, payload);
+        return result;
+    } catch (error) {
+        return error;
+    }
+}
+
+
 export default {
     createSectionDetail,
+    getOneSectionDetail,
+    getAllSectionDetail,
+    deleteOneSectionDetail,
+    updateSectionDetail,
 }

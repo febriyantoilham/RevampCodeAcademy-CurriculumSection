@@ -4,7 +4,7 @@ import * as ActionSection from '../constant/sectionConstant';
 import * as ActionSectionDetail from  '../constant/sectionDetailConstant';
 import { handleCreateCurriculum, handleDeleteBundleCurriculum, handleDeleteCurriculum, handleEditCurriculum, handleGetCategory, handleGetCurriculum, handleGetNewProgramId, handleGetOneCurriculum, handleSearchCurriculum } from "./curriculumSaga";
 import { handleAddSection, handleDeleteSection, handleGetSection, handleUpdateSection } from "./sectionSaga";
-import { handleAddSectionDetail } from "./sectionDetailSaga";
+import { handleAddSectionDetail, handleDeleteOneSectionDetail, handleGetAllSectionDetail, handleGetOneSectionDetail, handleUpdateSectionDetail } from "./sectionDetailSaga";
 
 
 function* watchAll(){
@@ -27,7 +27,11 @@ function* watchAll(){
         takeEvery(ActionSection.ADD_SECTION_REQUEST, handleAddSection),
         takeEvery(ActionSection.UPDATE_SECTION_REQUEST, handleUpdateSection),
         // Section Detail
-        takeEvery(ActionSectionDetail.ADD_SECTION_DETAIL_REQUEST, handleAddSectionDetail),
+        takeEvery(ActionSectionDetail.CREATE_SECTION_DETAIL_REQUEST, handleAddSectionDetail),
+        takeEvery(ActionSectionDetail.GET_ONE_SECTION_DETAIL_REQUEST, handleGetOneSectionDetail),
+        takeEvery(ActionSectionDetail.GET_ALL_SECTION_DETAIL_REQUEST, handleGetAllSectionDetail),
+        takeEvery(ActionSectionDetail.UPDATE_SECTION_DETAIL_REQUEST, handleUpdateSectionDetail),
+        takeEvery(ActionSectionDetail.DELETE_ONE_SECTION_DETAIL_REQUEST, handleDeleteOneSectionDetail),
     ])
 }
 

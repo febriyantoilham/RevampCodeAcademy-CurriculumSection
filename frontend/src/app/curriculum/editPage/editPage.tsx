@@ -5,16 +5,12 @@ import { useDispatch, useSelector } from "react-redux"
 import { useFormik } from "formik";
 
 import CustomAlert from "@/ui/alert";
-import EditForm from "./form";
-import LogoForm from "./formLogo";
+import EditForm from "./form/form";
+import LogoForm from "./form/formLogo";
 
 export default function Edit(props: any) {
   const dispatch = useDispatch();
-  const [refresh, setRefresh] = useState(true);
-
-  // Upload Image Config
-  const [previewImg, setPreviewImg] = useState<any>();
-  const [upload, setUpload] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   // Alert
   const [alertInfo, setAlertInfo] = useState({ showAlert: false, alertText: '', alertType: '' });
@@ -22,41 +18,18 @@ export default function Edit(props: any) {
   // State
   const { program } = useSelector((state: any) => state.programEntityState)
   const { category, instructor } = useSelector((state: any) => state.categoryCurriculumState);
-  const progEntityId = props.progEntityId
 
-  const initialValues = program
+  const progEntityId = props.progEntityId
 
   useEffect(() => {
     dispatch(GetOneCurriculumReq(progEntityId));
     setRefresh(false);
   }, [dispatch, progEntityId, refresh])
-
   
-
-  // const uploadConfig = (name: any) => (e: any) => {
-  //   let reader = new FileReader();
-  //   const image = e.target.files[0];
-  //   reader.onload = () => {
-  //     setPreviewImg(reader.result);
-  //   };
-  //   reader.readAsDataURL(image);
-  //   formik.setFieldValue("file", image);
-  //   setUpload(true);
-  // };
-
-  const onClear = (event: any) => {
-    event.preventDefault();
-    setPreviewImg('');
-    setUpload(false);
-  };
-
   const handleBackBtn = () => {
     dispatch(ResetCurriculumState());
-    props.setDisplay(false);
-    props.setRefresh(true);
+    props.setDisplay();
   }
-
-  // console.log(`Initial Value: ${JSON.stringify(formik.initialValues)}`);
   
   if (!program || program.length === 0) {
     return <div>Loading...</div>;

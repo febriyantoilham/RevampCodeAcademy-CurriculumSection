@@ -22,11 +22,13 @@ export class SectionController {
   }
 
   @Get('get/:sectProgEntityId')
-  public async getOne(
-    // @Param('sectId') sectId: number,
-    @Param('sectProgEntityId') sectProgEntityId: number,
-  ) {
-    return this.Service.findOne(sectProgEntityId);
+  public async getAll(@Param('sectProgEntityId') sectProgEntityId: number) {
+    return this.Service.findAll(sectProgEntityId);
+  }
+
+  @Get('get/one/:sectId')
+  public async getOne(@Param('sectId') sectId: number) {
+    return this.Service.findOne(sectId);
   }
 
   @Put('update/:sectProgEntityId/:sectId')

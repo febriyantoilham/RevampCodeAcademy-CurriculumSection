@@ -1,62 +1,62 @@
 import { call, put } from "redux-saga/effects";
 import sectionDetail from "@/api/sectionDetail";
-import { GetSectionDetailSuccess, GetSectionDetailFailed, DeleteSectionDetailSuccess, AddSectionDetailSuccess, AddSectionDetailFailed, UpdateSectionDetailSuccess, UpdateSectionDetailFailed } from "../action/sectionDetailAction";
-
-// function* handleGetSectionDetail(action: any): any {
-//     const { payload } = action;
-//     try {
-//         const result = yield call(sectionDetail., payload)
-//         yield put(GetSectionDetailSuccess(result.data))
-//     } catch (error) {
-//         yield put(GetSectionDetailFailed(error))
-//     }
-// }
-
-// function* handleDeleteSectionDetail(action: any): any {
-//     const { payload } = action;
-//     try {
-//         const result = yield call(sectionDetail.deleteSection, payload)
-//         yield put(DeleteSectionDetailSuccess(result))
-//     } catch (error) {
-//         yield put(GetSectionDetailFailed(error))
-//     }
-// }
+import { DeleteOneSectionDetailSuccess, DeleteOneSectionDetailFailed, CreateSectionDetailSuccess, CreateSectionDetailFailed, GetAllSectionDetailSuccess, GetAllSectionDetailFailed, UpdateSectionDetailSuccess, UpdateSectionDetailFailed } from "../action/sectionDetailAction";
+import { GetOneCurriculumFailed, GetOneCurriculumSuccess } from "../action/curriculumAction";
 
 function* handleAddSectionDetail(action: any): any {
     const { payload } = action
     try {
         const result = yield call(sectionDetail.createSectionDetail, payload)
-        yield put(AddSectionDetailSuccess(result.data))
+        yield put(CreateSectionDetailSuccess(result.data))
     } catch (error) {
-        yield put(AddSectionDetailFailed(error))
+        yield put(CreateSectionDetailFailed(error))
+        
+    }
+}
+
+function* handleGetOneSectionDetail(action: any): any {
+    const { payload } = action;
+    try {
+        const result = yield call(sectionDetail.getOneSectionDetail, payload)
+        yield put(GetOneCurriculumSuccess(result.data))
+    } catch (error) {
+        yield put(GetOneCurriculumFailed(error))
+    }
+}
+
+function* handleGetAllSectionDetail(action: any): any {
+    const { payload } = action;
+    try {
+        const result = yield call(sectionDetail.getAllSectionDetail, payload)
+        yield put(GetAllSectionDetailSuccess(result.data))
+    } catch (error) {
+        yield put(GetAllSectionDetailFailed(error))
+    }
+}
+
+
+function* handleUpdateSectionDetail(action: any): any {
+    const { payload } = action
+
+    try {
+        const result = yield call(sectionDetail.updateSectionDetail, payload)
+        yield put(UpdateSectionDetailSuccess(result.data))
+    } catch (error) {
+        yield put(UpdateSectionDetailFailed(error))
 
     }
 }
 
-// function* handleUpdateSectionDetail(action: any): any {
-//     const { payload } = action
-
-//     try {
-//         const result = yield call(sectionDetail.updateSection, payload)
-//         yield put(UpdateSectionDetailSuccess(result.data))
-//     } catch (error) {
-//         yield put(UpdateSectionDetailFailed(error))
-
-//     }
-// }
-
-// function* handleGetCategory(): any {
-//     try {
-//         const result = yield call(curriculum.getCategory)
-//         yield put(GetCatSuccess(result.data))
-//     } catch (error) {
-//         yield put(GetCatFailed(error))
-//     }
-// }
+function* handleDeleteOneSectionDetail(action: any): any {
+    const { payload } = action;
+    try {
+        const result = yield call(sectionDetail.deleteOneSectionDetail, payload)
+        yield put(DeleteOneSectionDetailSuccess(result))
+    } catch (error) {
+        yield put(DeleteOneSectionDetailFailed(error))
+    }
+}
 
 export {
-    // handleGetSectionDetail,
-    // handleDeleteSectionDetail,
-    handleAddSectionDetail,
-    // handleUpdateSectionDetail,
-}
+    handleDeleteOneSectionDetail, handleAddSectionDetail, handleGetOneSectionDetail, handleGetAllSectionDetail, handleUpdateSectionDetail
+};
