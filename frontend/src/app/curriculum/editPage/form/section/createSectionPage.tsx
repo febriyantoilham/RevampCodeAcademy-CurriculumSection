@@ -9,10 +9,8 @@ export default function CreateSectionPage(props: any) {
 
     function handleChange() {
         setModal(!modal);
-        props.refreshPage(true);
-        props.refreshForm(true);
     }
-
+    
     const formik = useFormik({
         initialValues: {
             sectTitle: '',
@@ -27,9 +25,11 @@ export default function CreateSectionPage(props: any) {
                 sectDescription: values.sectDescription,
               }
             }
-
+            
             dispatch(AddSectionRequest(data));
+            props.refreshForm(true);
             handleChange();
+            props.setAlertInfo({ showAlert: true, alertText: 'Add Section Success!', alertType: 'success'});
         },
     });
 

@@ -19,7 +19,6 @@ export default function ViewSectionDetailPage(props: any) {
         props.setview()
     }
 
-    const progEntityId = props.progEntityId;
     const section = props.section;
 
     const handleImageError = () => {
@@ -29,12 +28,13 @@ export default function ViewSectionDetailPage(props: any) {
     const onDelete = () => {
         dispatch(DeleteOneSectionDetailRequest(section.secdId));
         props.setview();
+        props.setAlertInfo({ showAlert: true, alertText: 'Delete Material Success!', alertType: 'success'});
     }
 
     return (
         <>
             {editView ? (<>
-                <EditSectionDetailPage data = {section} setview = {handleChange}/>
+                <EditSectionDetailPage data = {section} setview = {handleChange} setAlertInfo={props.setAlertInfo}/>
             </>)
             :(<>    
                 <div className="">

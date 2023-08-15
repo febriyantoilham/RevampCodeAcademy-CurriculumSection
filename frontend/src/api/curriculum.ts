@@ -82,9 +82,9 @@ const updateCurriculum = async (data: any,) => {
     }
 }
 
-const getCategory = async () => {
+const getCatAndEmp = async () => {
     try {
-        const result = await axios.get(`${config.domain}/program_entity/cat`)
+        const result = await axios.get(`${config.domain}/program_entity/cat&emp`)
         return result;
     } catch (error) {
         return error;
@@ -93,7 +93,7 @@ const getCategory = async () => {
 
 const getImageDefault = async (payload: any) => {
     try {
-        const result = await axios.get(`${config.domain}/program_entity/getLogo/${payload}`)
+        const result = await axios.get(`${config.domain}/program_entity/getImg/${payload}`)
         return result;
     } catch (error) {
         return error;
@@ -108,7 +108,7 @@ export default {
     deleteBundleCurriculum,
     createCurriculum,
     getNewProgEntityId,
-    getCategory,
+    getCatAndEmp,
     updateCurriculum,
     getImageDefault,
 }

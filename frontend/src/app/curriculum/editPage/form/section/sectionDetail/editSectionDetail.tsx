@@ -12,6 +12,8 @@ export default function EditSectionDetailPage(props: any) {
     
     // File
     const [preview, setPreview] = useState<any>();
+    const [previewType, setPreviewType] = useState('');
+
     const [upload, setUpload] = useState(false);
     const [fileExists, setFileExists] = useState(true);
     const [changeFile, setChangeFile] = useState(false);
@@ -45,6 +47,7 @@ export default function EditSectionDetailPage(props: any) {
 
             dispatch(UpdateSectionDetailRequest(data));
             handleChange();
+            props.setAlertInfo({ showAlert: true, alertText: 'Edit Material Success!', alertType: 'success'});
         },
     });
 
@@ -53,9 +56,10 @@ export default function EditSectionDetailPage(props: any) {
         let reader = new FileReader();
         const file = e.target.files[0];
         reader.onload = () => {
-        setPreview(reader.result);
+            setPreview(reader.result);
         };
         reader.readAsDataURL(file);
+        setPreviewType(file.type.split('/')[0]);
         formik.setFieldValue("file", file);
         setUpload(true);
     };
@@ -125,39 +129,43 @@ export default function EditSectionDetailPage(props: any) {
                                 }
                             </>
                             ):(
-                            <div className="flex flex-col">
-                            <div className="avatar mb-3">
-                                <div className="w-24 mask mask-squircle m-auto">
-                                    <Image src={preview} alt={"x"} layout="fill" objectFit="contain"/>
-                                </div>
-                            </div>
+                            <div className="flex justify-center">
+                                {previewType === formik.values.sedmFiletype ? (
+                                    formik.values.sedmFiletype === 'image' ? (<>
+                                        <div className="avatar mb-3">
+                                            <div className="w-24 mask mask-squircle m-auto">
+                                                <Image src={preview} alt={"x"} layout="fill" objectFit="contain"/>
+                                            </div>
+                                        </div>
+                                    </>) : 
+                                    formik.values.sedmFiletype === 'video' ? (<>
+                                        <video controls>
+                                            <source src={`${preview}`}/>
+                                        </video>
+                                    </>) : (<></>)
+                                ):(<p className="text-center">To Show the preview, Please Select Correct File Type!</p>)}
                             </div>
                             )}
                         </div>
                     </div>
                     
                 </div>
-                <div className="">
+                <div className="mt-3">
                     {!changeFile ? (
                         <div className="flex justify-end">
                             <button onClick={() => setChangeFile(true)} className="btn btn-ghost btn-sm capitalize">edit</button>
                         </div>
                     ):(
                     <div className="flex flex-col items-center">
-                        <div className="flex items-end gap-3">
-                            <div className="flex flex-col">
-                                <label htmlFor="sedmFiletype" className="mb-2 font-medium">Attachment Type</label>
-                                <select className="select select-bordered capitalize" id="sedmFiletype" placeholder="File Type" defaultValue={'Pick one'} onChange={formik.handleChange} required>
-                                    <option disabled selected>Pick one</option>
-                                    <option className="capitalize">video</option>
-                                    <option className="capitalize">image</option>
-                                    <option className="capitalize">file</option>
-                                </select>
+                        <div className="flex gap-x-3">
+                            <input type="file" accept=".png,.jpg,.jpeg,.mp4,.avi,.mov" id="file" name="file" className="file-input file-input-bordered w-full max-w-xs m-auto" onChange={uploadConfig('file')}/>
+                            <select className="select select-bordered capitalize" id="sedmFiletype" placeholder="File Type" defaultValue={formik.values.sedmFiletype} onChange={formik.handleChange} required>
+                                <option disabled selected>Pick one</option>
+                                <option className="capitalize">video</option>
+                                <option className="capitalize">image</option>
+                                <option className="capitalize">file</option>
+                            </select>
                             </div>
-                            <div>
-                                <input type="file" id="file" name="file" className="file-input file-input-bordered w-full max-w-xs m-auto" onChange={uploadConfig('file')}/>
-                            </div>
-                        </div>
                         <div>
                             <a className="btn btn-error btn-sm text-center mt-5" onClick={(event) => {setChangeFile(false); onClear(event)}}>Cancel</a>
                         </div>

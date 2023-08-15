@@ -1,10 +1,19 @@
 import Image from "next/image";
 import MediaShow from "./section/MediaShow";
+import { useState } from "react";
+import config from "@/config/config";
 
 export default function ProgramForm(props: any) {
     const program = props.program;
     const category = props.option.category;
     const instructor = props.option.instructor;
+
+    // Instructor Image
+    const [imageExists, setImageExists] = useState(true);
+
+    const handleImageError = () => {
+        setImageExists(false);
+    };
 
     if (!program || program.length === 0) {
         return <div>Loading...</div>;
@@ -72,14 +81,27 @@ export default function ProgramForm(props: any) {
                             <div className="flex flex-col xl:col-span-1 xl:order-last">
                                 <div className="avatar">
                                     <div className="w-24 mask mask-squircle m-auto">
-                                    <Image src="/photo-pic.jpg" alt={"photo-pic"} layout="fill" objectFit="contain"/>
+                                    {instructor.map((emp: any) => (
+                                        emp.userEntityId == program.progCreatedById ? (
+                                            imageExists ? (
+                                            <Image src={`${config.domain}/program_entity/getImg/${emp.userPhoto}`} alt={"dss"} layout="fill" objectFit="contain" onError={handleImageError}/>
+                                            ) : ( 
+                                            <div className="avatar placeholder">
+                                                <div className="bg-neutral-focus text-neutral-content rounded-full w-24 flex flex-col">
+                                                <span className="text-sm">Image</span>
+                                                <span className="text-sm">Not Found</span>
+                                                </div>
+                                            </div> 
+                                            )
+                                        ) : (<></>)
+                                    ))}
                                     </div>
                                 </div>
                             </div>
                             <div className="flex flex-col justify-center xl:col-span-2 mb-3">
                             <label htmlFor="progCreatedBy" className="mb-2 font-medium">Instructor</label>
                                 {instructor.map((emp: any, index: any) => (
-                                    emp.userEntityId === program.progCreatedById ? (<input key={emp.userE} type="text" id="progCreatedById" placeholder="Program Instructor" className="input input-bordered w-full capitalize" value={`${emp.userFirstName} ${emp.userLastName}` } disabled/>) : (<></>)
+                                    emp.userEntityId == program.progCreatedById ? (<input key={emp.userE} type="text" id="progCreatedById" placeholder="Program Instructor" className="input input-bordered w-full capitalize" value={`${emp.userFirstName} ${emp.userLastName}` } disabled/>) : (<></>)
                                 ))}
                             </div>
                         </div>

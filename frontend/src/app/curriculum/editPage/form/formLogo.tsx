@@ -36,7 +36,7 @@ export default function LogoForm(props: any) {
       setPreviewImg('');
       setChangeImage(false);
       setUpload(false);
-      props.setRefresh(true);
+      props.setOnUpload(false);
       props.setAlertInfo({ showAlert: true, alertText: 'Changed Image Successfully!', alertType: 'success'});
     }
   });
@@ -51,12 +51,14 @@ export default function LogoForm(props: any) {
     reader.readAsDataURL(image);
     formik.setFieldValue("file", image);
     setUpload(true);
+    props.setOnUpload(true);
   };
-
+  
   const onClear = (event: any) => {
     event.preventDefault();
     setPreviewImg('');
     setUpload(false);
+    props.setOnUpload(false);
   };
 
   const handleImageError = () => {
@@ -75,7 +77,7 @@ export default function LogoForm(props: any) {
                         <>
                             <div className="avatar mb-3">
                             <div className="w-24 m-auto">
-                                {program?.progImage === null || program?.progImage === '' ? (<Image src="/photo-def.png" alt={""} layout="fill" objectFit="contain"/>) : imageExists ? (<Image src={`${config.domain}/program_entity/getLogo/${program?.progImage}`} alt={"dss"} layout="fill" objectFit="contain" onError={handleImageError}/>) : (<Image src="/photo-def.png" alt={""} layout="fill" objectFit="contain"/>)}
+                                {program?.progImage === null || program?.progImage === '' ? (<Image src="/photo-def.png" alt={""} layout="fill" objectFit="contain"/>) : imageExists ? (<Image src={`${config.domain}/program_entity/getImg/${program?.progImage}`} alt={"dss"} layout="fill" objectFit="contain" onError={handleImageError}/>) : (<Image src="/photo-def.png" alt={""} layout="fill" objectFit="contain"/>)}
                             </div>
                             </div>
                         </>

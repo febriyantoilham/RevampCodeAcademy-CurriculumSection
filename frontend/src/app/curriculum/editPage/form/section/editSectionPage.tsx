@@ -39,9 +39,9 @@ export default function EditSectionPage(props: any) {
             }
 
             dispatch(UpdateSectionRequest(data));
-            props.refreshPage(true);
             props.refreshForm(true);
             handleChange();
+            props.setAlertInfo({ showAlert: true, alertText: 'Edit Section Success!', alertType: 'success'});
         },
     });
 
@@ -54,7 +54,7 @@ export default function EditSectionPage(props: any) {
             <input type="checkbox" checked={modal} onChange={handleChange} className="modal-toggle"/>
             <div className="modal modal-bottom sm:modal-middle">
                 <div className="modal-box">
-                    {deleteAlert ? (<DeleteSection setview={handleChange} progId={progEntityId} section={section.sectId} refreshPage={props.refreshPage} refreshForm={props.refreshForm}/>
+                    {deleteAlert ? (<DeleteSection setview={handleChange} progId={progEntityId} section={section.sectId} refreshForm={props.refreshForm} setAlertInfo={props.setAlertInfo}/>
                     ):(
                         <>
                             <div className="">

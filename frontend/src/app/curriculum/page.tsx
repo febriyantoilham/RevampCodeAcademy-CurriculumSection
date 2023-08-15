@@ -113,7 +113,8 @@ export default function Page() {
       dispatch(DeleteBundleCurriculumReq(selectedItem));
       setSelectedItem([]);
       setSelectedAll(false);
-      setRefresh(true);
+      setAlertInfo({ showAlert: true, alertText: 'Deleting Data Success!', alertType: 'success'});
+      // setRefresh(true);
     } catch (error) {
       console.error('Error deleting bundle:', error);
     }
@@ -130,7 +131,7 @@ export default function Page() {
           <>
             <div className=''>
               <div className='py-2'>
-                {alertInfo.showAlert && <CustomAlert alertInfo={alertInfo} setAlert={setAlertInfo}/>}
+                {alertInfo.showAlert && <CustomAlert alertInfo={alertInfo} setAlert={setAlertInfo} setRefresh={setRefresh}/>}
                 <div className='grid grid-cols-2 gap-4'>
                   <div className='flex justify-start text-xl font-bold'>Curriculum</div>
                   <div className='flex justify-end'>

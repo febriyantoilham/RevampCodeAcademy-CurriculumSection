@@ -24,9 +24,9 @@ export default function DeleteSection(props: any) {
     }
 
     dispatch(DeleteSectionRequest(data))
-    props.refreshPage(true);
     props.refreshForm(true);
     handleChange();
+    props.setAlertInfo({ showAlert: true, alertText: 'Delete Section Success!', alertType: 'success'});
   };
 
   return (

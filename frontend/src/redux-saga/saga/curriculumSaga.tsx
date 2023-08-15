@@ -83,9 +83,9 @@ function* handleEditCurriculum(action: any): any {
     }
 }
 
-function* handleGetCategory(): any {
+function* handleGetCategoryAndEmployee(): any {
     try {
-        const result = yield call(curriculum.getCategory)
+        const result = yield call(curriculum.getCatAndEmp)
         yield put(GetCatSuccess(result.data))
     } catch (error) {
         yield put(GetCatFailed(error))
@@ -100,6 +100,6 @@ export {
     handleDeleteCurriculum,
     handleDeleteBundleCurriculum,
     handleCreateCurriculum,
-    handleGetCategory,
+    handleGetCategoryAndEmployee,
     handleEditCurriculum,
 }

@@ -33,9 +33,9 @@ export default function CreateSectionDetailPage(props: any) {
             payload.append("sedmFiletype", values.sedmFiletype);
 
             dispatch(CreateSectionDetailRequest(payload));
-            props.refreshPage(true);
             props.refreshForm(true);
             handleChange();
+            props.setAlertInfo({ showAlert: true, alertText: 'Add Material Success!', alertType: 'success'});
         },
     });
 

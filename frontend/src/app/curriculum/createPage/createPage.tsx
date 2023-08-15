@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { useFormik } from "formik";
 
 import EditDisplay from "../editPage/editPage";
+import config from "@/config/config";
 
 export default function Create(props: any) {
   const dispatch = useDispatch();
@@ -13,6 +14,9 @@ export default function Create(props: any) {
   // Upload Image Config
   const [previewImg, setPreviewImg] = useState<any>();
   const [upload, setUpload] = useState(false);
+
+  // Instructor Image
+  const [imageExists, setImageExists] = useState(true);
 
   // State
   const { progEntityId } = useSelector((state: any) => state.programEntityState)
@@ -47,7 +51,7 @@ export default function Create(props: any) {
       progLanguage: '',
       progPrice: '',
       progTagSkill: '',
-      progCreatedById: '',
+      progCreatedById: -1,
       predItemLearning: '',
       predDescription: '',
       file: '',
@@ -96,10 +100,14 @@ export default function Create(props: any) {
     setUpload(false);
   };
 
+  const handleImageError = () => {
+    setImageExists(false);
+  };
+
   return (
     <>
     {editDisplay ? ( !refresh &&
-          <EditDisplay progEntityId={progId} setAlertInfo={props.setAlertInfo} setDisplay={setDisplay}/>
+          <EditDisplay progEntityId={progId} setAlertInfo={props.setAlertInfo} setDisplay={setDisplay} create={true}/>
         ) : (
           <>
             <div className='py-2'>
@@ -176,7 +184,7 @@ export default function Create(props: any) {
                       <div className="flex flex-col mb-3">
                         <label htmlFor="progDuration" className="mb-2 font-medium">Duration in Month</label>
                         <div className="flex flex-row gap-x-3">
-                          <input type="number" id="progDuration" placeholder="0" className="input input-bordered w-full capitalize" defaultValue={formik.values.progDuration} onChange={formik.handleChange}/>
+                          <input type="number" id="progDuration" min={0} placeholder="0" className="input input-bordered w-full capitalize" defaultValue={formik.values.progDuration} onChange={formik.handleChange}/>
                           <select id="progDurationType" className="select input-bordered w-full capitalize" defaultValue={'Duration'} onChange={formik.handleChange}>
                             <option disabled>Duration</option>
                             <option className="capitalize">days</option>
@@ -208,7 +216,7 @@ export default function Create(props: any) {
                       </div>
                       <div className="flex flex-col mb-3">
                         <label htmlFor="progPrice" className="mb-2 font-medium">Price in IDR</label>
-                        <input type="number" id="progPrice" placeholder="100.000" className="input input-bordered w-full capitalize" defaultValue={formik.values.progPrice} onChange={formik.handleChange}/>
+                        <input type="number" id="progPrice" min={0} placeholder="100.000" className="input input-bordered w-full capitalize" defaultValue={formik.values.progPrice} onChange={formik.handleChange}/>
                       </div>
                     </div>
                     <div className="flex flex-col mb-3">
@@ -217,18 +225,34 @@ export default function Create(props: any) {
                     </div>
                     <div className="grid xl:grid-cols-3 gap-3 mt-3">
                       <div className="flex flex-col xl:col-span-1 xl:order-last">
-                          <div className="avatar">
-                              <div className="w-24 mask mask-squircle m-auto">
-                              <Image src="/photo-pic.jpg" alt={"photo-pic"} layout="fill" objectFit="contain"/>
-                              </div>
-                          </div>
+                        <div className="avatar">
+                            <div className="w-24 mask mask-circle m-auto">
+                              {
+                                formik.values.progCreatedById < 0 ? (<Image src="/userDefault.png" alt={"photo-pic"} layout="fill" objectFit="contain"/>
+                                ) : ( instructor.map((emp: any) => (
+                                  emp.userEntityId == formik.values.progCreatedById ? (
+                                    imageExists ? (
+                                      <Image src={`${config.domain}/program_entity/getImg/${emp.userPhoto}`} alt={"dss"} layout="fill" objectFit="contain" onError={handleImageError}/>
+                                    ) : ( 
+                                      <div className="avatar placeholder">
+                                        <div className="bg-neutral-focus text-neutral-content rounded-full w-24 flex flex-col">
+                                          <span className="text-sm">Image</span>
+                                          <span className="text-sm">Not Found</span>
+                                        </div>
+                                      </div> 
+                                    )
+                                  ) : (<></>)
+                                )))
+                              }
+                            </div>
+                        </div>
                       </div>
                       <div className="flex flex-col justify-center xl:col-span-2 mb-3">
                         <label htmlFor="progCreatedBy" className="mb-2 font-medium">Instructor</label>
-                        <select id="progCreatedById" className="select input-bordered w-full capitalize" defaultValue={'Instructor'} onChange={formik.handleChange}>
-                          <option disabled>Instructor</option>
-                          {instructor.map((emp: any, index: any) => (
-                            <option key={emp.userEntityId} value={emp.userEntityId}>{`${emp.userEntityId}. ${emp.userFirstName} ${emp.userLastName}`}</option>
+                        <select id="progCreatedById" className="select input-bordered w-full capitalize" defaultValue={formik.values.progCreatedById} onChange={formik.handleChange}>
+                          <option value={-1} disabled>Instructor</option>
+                          {instructor.map((emp: any) => (
+                            <option key={emp.userEntityId} value={emp.userEntityId}>{`${emp.userEntityId}. ${emp.userFirstName} ${emp.userLastName})`}</option>
                           ))}
                         </select>
                       </div>

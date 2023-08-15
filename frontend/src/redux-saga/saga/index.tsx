@@ -2,7 +2,7 @@ import { takeEvery, all, take } from "redux-saga/effects";
 import * as ActionCurriculum from '../constant/curriculumConstant';
 import * as ActionSection from '../constant/sectionConstant';
 import * as ActionSectionDetail from  '../constant/sectionDetailConstant';
-import { handleCreateCurriculum, handleDeleteBundleCurriculum, handleDeleteCurriculum, handleEditCurriculum, handleGetCategory, handleGetCurriculum, handleGetNewProgramId, handleGetOneCurriculum, handleSearchCurriculum } from "./curriculumSaga";
+import { handleCreateCurriculum, handleDeleteBundleCurriculum, handleDeleteCurriculum, handleEditCurriculum, handleGetCategoryAndEmployee, handleGetCurriculum, handleGetNewProgramId, handleGetOneCurriculum, handleSearchCurriculum } from "./curriculumSaga";
 import { handleAddSection, handleDeleteSection, handleGetSection, handleUpdateSection } from "./sectionSaga";
 import { handleAddSectionDetail, handleDeleteOneSectionDetail, handleGetAllSectionDetail, handleGetOneSectionDetail, handleUpdateSectionDetail } from "./sectionDetailSaga";
 
@@ -14,7 +14,7 @@ function* watchAll(){
         takeEvery(ActionCurriculum.SEARCH_DATA_REQ, handleSearchCurriculum),
         takeEvery(ActionCurriculum.DELETE_BUNDLE_DATA_REQ, handleDeleteBundleCurriculum),
         // Category
-        takeEvery(ActionCurriculum.GET_CAT_REQ, handleGetCategory),
+        takeEvery(ActionCurriculum.GET_CAT_REQ, handleGetCategoryAndEmployee),
         // Program Entity
         takeEvery(ActionCurriculum.GET_NEW_ID_REQ, handleGetNewProgramId),
         takeEvery(ActionCurriculum.GET_ONE_DATA_REQ, handleGetOneCurriculum),

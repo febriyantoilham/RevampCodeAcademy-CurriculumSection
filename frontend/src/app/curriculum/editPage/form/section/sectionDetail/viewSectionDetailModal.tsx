@@ -23,7 +23,7 @@ export default function ViewSecDet(props: any) {
                 <input type="checkbox" checked={modal} onChange={handleChange} className="modal-toggle"/>
                 <div className="modal modal-bottom sm:modal-middle">
                     <div className="modal-box sm:w-8/12 sm:max-w-full">
-                        <ViewSectionDetailPage setview={handleChange} section={props.sectionDetail} view={false}/>
+                        <ViewSectionDetailPage setview={handleChange} section={props.sectionDetail} setAlertInfo={props.setAlertInfo} view={false}/>
                     </div>
                 </div>
             </div>

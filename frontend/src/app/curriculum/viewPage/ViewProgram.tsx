@@ -52,10 +52,10 @@ export default function ViewProgram(props: any) {
     return (
       <>
         {editDisplay ? ( !refresh &&
-            <EditDisplay progEntityId={progId} setAlertInfo={props.setAlertInfo} setDisplay={setDisplay}/>
+            <EditDisplay progEntityId={progId} setAlertInfo={setAlertInfo} setDisplay={setDisplay}/>
           ) : (
             <>
-              {alertInfo.showAlert && <CustomAlert alertInfo={alertInfo} setAlert={setAlertInfo}/>}
+              {alertInfo.showAlert && <CustomAlert alertInfo={alertInfo} setAlert={setAlertInfo} setRefresh={setRefresh}/>}
               <>
                 <div className='py-2'>
                   <div className='flex justify-between items-center gap-4'>

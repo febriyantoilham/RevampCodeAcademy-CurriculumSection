@@ -11,6 +11,7 @@ import EditSectionPage from "./section/editSectionPage";
 import DeleteSection from "./section/deleteSectionPage";
 import CreateSectionDetailPage from "./section/sectionDetail/createSectionDetailPage";
 import ViewSecDet from "./section/sectionDetail/viewSectionDetailModal";
+import config from "@/config/config";
 
 export default function EditForm(props: any) {
     const dispatch = useDispatch();
@@ -19,6 +20,9 @@ export default function EditForm(props: any) {
     const program = props.program;
     const category = props.option.category;
     const instructor = props.option.instructor;
+
+    // Instructor Image
+    const [imageExists, setImageExists] = useState(true);
 
     useEffect(() => {
         setRefresh(false);
@@ -80,12 +84,21 @@ export default function EditForm(props: any) {
 
             // console.log(`Payload: ${JSON.stringify(payload)}`);
 
-            dispatch(EditCurriculumReq(payload));
-            props.setView();
-            props.setAlertInfo({ showAlert: true, alertText: 'Changed Image Successfully!', alertType: 'success'});
+            if(props.onUpload){
+                props.setAlertInfo({ showAlert: true, alertText: 'Please Submit or Cancel the Image Upload!', alertType: 'error'});
+            } else {
+                dispatch(EditCurriculumReq(payload));
+                props.setView();
+                props.setAlertInfoView({ showAlert: true, alertText: 'Edit Success!', alertType: 'success'});
+            }
+
         }
         },
     });
+
+    const handleImageError = () => {
+        setImageExists(false);
+    };
 
     if (!program || program.length === 0) {
         return <div>Loading...</div>;
@@ -112,7 +125,7 @@ export default function EditForm(props: any) {
                             <div className="grid xl:grid-cols-3 gap-x-3">
                                 <div className="flex flex-col mb-3">
                                     <label htmlFor="progType" className="mb-2 font-medium">Program Type</label>
-                                    <select id="progType" className="select input-bordered w-full capitalize" defaultValue={'Program Type'} onChange={formik.handleChange}>
+                                    <select id="progType" className="select input-bordered w-full capitalize font-normal" defaultValue={formik.values.progType} onChange={formik.handleChange}>
                                         <option disabled>Program Type</option>
                                         <option className="capitalize">bootcamp</option>
                                         <option className="capitalize">course</option>
@@ -120,7 +133,7 @@ export default function EditForm(props: any) {
                                 </div>
                                 <div className="flex flex-col mb-3 ">
                                     <label htmlFor="progLearningType" className="mb-2 font-medium">Learning Type</label>
-                                    <select id="progLearningType" className="select input-bordered w-full capitalize" defaultValue={'Learning Type'} onChange={formik.handleChange}>
+                                    <select id="progLearningType" className="select input-bordered w-full capitalize font-normal" defaultValue={formik.values.progLearningType} onChange={formik.handleChange}>
                                         <option disabled>Learning Type</option>
                                         <option className="capitalize">online</option>
                                         <option className="capitalize">offline</option>
@@ -130,7 +143,7 @@ export default function EditForm(props: any) {
                                     <label htmlFor="progDuration" className="mb-2 font-medium">Duration in Month</label>
                                         <div className="flex flex-row gap-x-3">
                                             <input type="number" id="progDuration" placeholder="0" className="input input-bordered w-full capitalize" defaultValue={formik.values.progDuration} onChange={formik.handleChange}/>
-                                            <select id="progDurationType" className="select input-bordered w-full capitalize" defaultValue={'Duration'} onChange={formik.handleChange}>
+                                            <select id="progDurationType" className="select input-bordered w-full capitalize font-normal" defaultValue={formik.values.progDurationType} onChange={formik.handleChange}>
                                                 <option disabled>Duration</option>
                                                 <option className="capitalize">days</option>
                                                 <option className="capitalize">week</option>
@@ -142,8 +155,8 @@ export default function EditForm(props: any) {
                             <div className="grid grid-cols-3 gap-3">
                                 <div className="flex flex-col mb-3">
                                     <label htmlFor="progCateId" className="mb-2 font-medium">Category</label>
-                                    <select id="progCateId" className="select input-bordered w-full capitalize" defaultValue={'Category'} onChange={formik.handleChange} required>
-                                        <option disabled>Category</option>
+                                    <select id="progCateId" className="select input-bordered w-full capitalize font-normal" defaultValue={formik.values.progCateId} onChange={formik.handleChange} required>
+                                        <option value={-1} disabled>Category</option>
                                         {category.map((item: any) => {
                                         return (
                                         <option key={item.cateId} value={item.cateId}>{item.cateName}</option>
@@ -153,7 +166,7 @@ export default function EditForm(props: any) {
                                 </div>
                                 <div className="flex flex-col mb-3">
                                     <label htmlFor="progLanguage" className="mb-2 font-medium">Language</label>
-                                    <select id="progLanguage" className="select input-bordered w-full capitalize" defaultValue={'Language'} onChange={formik.handleChange}>
+                                    <select id="progLanguage" className="select input-bordered w-full capitalize font-normal" defaultValue={formik.values.progLanguage} onChange={formik.handleChange}>
                                     <option disabled>Language</option>
                                     <option className="capitalize">english</option>
                                     <option className="capitalize">bahasa</option>
@@ -171,18 +184,34 @@ export default function EditForm(props: any) {
                             <div className="grid xl:grid-cols-3 gap-3 mt-3">
                                 <div className="flex flex-col xl:col-span-1 xl:order-last">
                                     <div className="avatar">
-                                        <div className="w-24 mask mask-squircle m-auto">
-                                        <Image src="/photo-pic.jpg" alt={"photo-pic"} layout="fill" objectFit="contain"/>
+                                        <div className="w-24 mask mask-circle m-auto">
+                                        {
+                                            formik.values.progCreatedById < 0 ? (<Image src="/userDefault.png" alt={"photo-pic"} layout="fill" objectFit="contain"/>
+                                            ) : ( instructor.map((emp: any) => (
+                                            emp.userEntityId == formik.values.progCreatedById ? (
+                                                imageExists ? (
+                                                <Image src={`${config.domain}/program_entity/getImg/${emp.userPhoto}`} alt={"dss"} layout="fill" objectFit="contain" onError={handleImageError}/>
+                                                ) : ( 
+                                                <div className="avatar placeholder">
+                                                    <div className="bg-neutral-focus text-neutral-content rounded-full w-24 flex flex-col">
+                                                    <span className="text-sm">Image</span>
+                                                    <span className="text-sm">Not Found</span>
+                                                    </div>
+                                                </div> 
+                                                )
+                                            ) : (<></>)
+                                            )))
+                                        }
                                         </div>
                                     </div>
                                 </div>
                                 <div className="flex flex-col justify-center xl:col-span-2 mb-3">
                                     <label htmlFor="progCreatedBy" className="mb-2 font-medium">Instructor</label>
-                                    <select id="progCreatedById" className="select input-bordered w-full capitalize" defaultValue={'Instructor'} onChange={formik.handleChange}>
-                                        <option disabled>Instructor</option>
-                                        {instructor.map((emp: any, index: any) => (
-                                            <option key={emp.userEntityId} value={emp.userEntityId}>{`${emp.userEntityId}. ${emp.userFirstName} ${emp.userLastName}`}</option>
-                                        ))}
+                                    <select id="progCreatedById" className="select input-bordered w-full capitalize font-normal" defaultValue={formik.values.progCreatedById} onChange={formik.handleChange}>
+                                    <option value={-1} disabled>Instructor</option>
+                                    {instructor.map((emp: any) => (
+                                        <option key={emp.userEntityId} value={emp.userEntityId}>{`${emp.userEntityId}. ${emp.userFirstName} ${emp.userLastName})`}</option>
+                                    ))}
                                     </select>
                                 </div>
                             </div>
@@ -199,7 +228,7 @@ export default function EditForm(props: any) {
                             <hr className="mt-3 mb-6"/>
                             <div className="flex justify-between items-center">
                                 <p className="p-0 m-0 font-medium text-base uppercase">Materi (Section & Sub Section)</p>
-                                <CreateSectionPage progId={program.progEntityId} refreshPage={props.setRefresh} refreshForm={setRefresh}/>
+                                <CreateSectionPage progId={program.progEntityId} refreshPage={props.setRefresh} refreshForm={setRefresh} setAlertInfo={props.setAlertInfo}/>
                             </div>
                             <div className="mt-3">
                                 { program?.sections?.length !== 0 ? (
@@ -210,7 +239,7 @@ export default function EditForm(props: any) {
                                             <div className="flex justify-between">
                                                 <div className="text-xl font-medium">{section.sectTitle}</div>
                                                 <div className="flex">
-                                                    <EditSectionPage section={section} progId={program.progEntityId} refreshPage={props.setRefresh} refreshForm={setRefresh}/>
+                                                    <EditSectionPage section={section} progId={program.progEntityId} refreshForm={setRefresh} setAlertInfo={props.setAlertInfo}/>
                                                 </div>
                                             </div>
                                             <div className="border border-gray-300 my-2"></div>
@@ -220,7 +249,7 @@ export default function EditForm(props: any) {
                                                     return (
                                                         <>
                                                             <div key={item.secdId} className="flex flex-row justify-between">
-                                                                <ViewSecDet sectionDetail={item} refreshPage={props.setRefresh} refreshForm={setRefresh}/>
+                                                                <ViewSecDet sectionDetail={item} refreshPage={props.setRefresh} refreshForm={setRefresh} setAlertInfo={props.setAlertInfo}/>
                                                                 <div className="flex gap-5"> 
                                                                     <p className="text-base">{item.secdMinute} Minutes</p>
                                                                     {item.sectionDetailMaterials[0].sedmFiletype === 'image' ? (<>
@@ -236,14 +265,14 @@ export default function EditForm(props: any) {
                                                 ):(
                                                     <div className="flex flex-col gap-3 items-center">
                                                         <div className="">The Section Material are empty, create new!</div>
-                                                        <CreateSectionDetailPage progEntityId={program.progEntityId} section={section.sectId} refreshPage={props.setRefresh} refreshForm={setRefresh}/>
+                                                        <CreateSectionDetailPage progEntityId={program.progEntityId} section={section.sectId} refreshForm={setRefresh} setAlertInfo={props.setAlertInfo}/>
                                                     </div>
                                                 )
                                                 }
                                             </div>
                                             {section.sectionDetails?.length !== 0 ? (
                                                 <div className="flex gap-3 items-center justify-end">
-                                                    <CreateSectionDetailPage progEntityId={program.progEntityId} section={section.sectId} refreshPage={props.setRefresh} refreshForm={setRefresh}/>
+                                                    <CreateSectionDetailPage progEntityId={program.progEntityId} section={section.sectId} refreshForm={setRefresh} setAlertInfo={props.setAlertInfo}/>
                                                 </div>
                                             ):(<></>)}
                                         </div>
@@ -262,7 +291,7 @@ export default function EditForm(props: any) {
                             Save
                             </button>
                             <button type="button" className="btn btn-neutral" onClick={() => props.setView()}>
-                            Cancel
+                                {props.create ? (<>Close</>):(<>Cancel</>)}
                             </button>
                         </div>
                     </form> 

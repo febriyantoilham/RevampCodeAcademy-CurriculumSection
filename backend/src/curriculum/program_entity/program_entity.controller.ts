@@ -54,9 +54,9 @@ export class ProgramEntityController {
     return this.Service.findOne(id);
   }
 
-  @Get('getLogo/:imageName')
-  public async getLogo(@Param('imageName') imageName: any, @Res() res: any) {
-    return this.Service.getLogo(imageName, res);
+  @Get('getImg/:imageName')
+  public async getImg(@Param('imageName') imageName: any, @Res() res: any) {
+    return this.Service.getImg(imageName, res);
   }
 
   @Put('update/:id')
@@ -79,13 +79,8 @@ export class ProgramEntityController {
     return this.Service.DeleteBundle(fields);
   }
 
-  @Get('cat')
-  public async getCategory() {
-    return this.Service.getAllCategory();
-  }
-
-  @Get('instructor')
-  public async getInstructor() {
-    return this.Service.getAllInstructor();
+  @Get('cat&emp')
+  public async getCatAndEmp() {
+    return this.Service.getCatAndEmp();
   }
 }

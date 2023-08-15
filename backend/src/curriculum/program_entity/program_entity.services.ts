@@ -70,7 +70,7 @@ export class ProgramEntityService {
   ): Promise<ProgramEntityInterface> {
     const skippedItems = (options.page - 1) * options.limit;
     let totalCount = await this.serviceProgEntity.count();
-    if (options.name && options.status) {
+    if (options.name || options.status) {
       const program_entity = await this.serviceProgEntity.find({
         relations: [
           'programEntityDescription',
@@ -272,7 +272,7 @@ export class ProgramEntityService {
     return progEntity;
   }
 
-  public async getLogo(imageName: any, res: any) {
+  public async getImg(imageName: any, res: any) {
     const imagePath = path.join(process.cwd(), 'uploads', imageName);
     try {
       const image = fs.readFileSync(imagePath);
@@ -355,20 +355,28 @@ export class ProgramEntityService {
     }
   }
 
+  public async getCatAndEmp() {
+    try {
+      const call = [this.getAllCategory(), this.getAllInstructor()];
+
+      const [category, instructor] = await Promise.all(call);
+
+      return {
+        category: category,
+        instructor: instructor,
+      };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+
   public async getAllCategory() {
     try {
-      const category = await this.serviceCategoryProgram.find({});
-      const employee = await this.serviceProgramInstructor.find({});
-      const instructor = [];
-      for (const emp of employee) {
-        const user = await this.serviceUsers.find({
-          where: { userEntityId: emp.empEntityId },
-          relations: ['employee'],
-        });
-        instructor.push(...user);
-      }
+      const category = await this.serviceCategoryProgram.find({
+        select: ['cateId', 'cateName'],
+      });
 
-      return { category, instructor };
+      return category;
     } catch (error) {
       throw error.message;
     }
@@ -376,8 +384,22 @@ export class ProgramEntityService {
 
   public async getAllInstructor() {
     try {
-      const result = await this.serviceProgramInstructor.find({});
-      return result;
+      const employee = await this.serviceProgramInstructor.find({});
+      const instructor = [];
+      for (const emp of employee) {
+        const user = await this.serviceUsers.find({
+          select: [
+            'userEntityId',
+            'userFirstName',
+            'userLastName',
+            'userPhoto',
+            'userCurrentRole',
+          ],
+          where: { userEntityId: emp.empEntityId, userCurrentRole: 4 },
+        });
+        instructor.push(...user);
+      }
+      return instructor;
     } catch (error) {
       throw error.message;
     }
