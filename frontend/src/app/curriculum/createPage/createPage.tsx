@@ -3,6 +3,7 @@ import Image from "next/image"
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { useFormik } from "formik";
+import CustomSelect from "@/ui/customSelect";
 
 import EditDisplay from "../editPage/editPage";
 import config from "@/config/config";
@@ -25,6 +26,9 @@ export default function Create(props: any) {
   // Display Edit
   const [editDisplay, setEditDisplay] = useState(false);
   const [progId, setProgId] = useState('');
+
+  // Show instructor
+  const [showInstructor, setShowInstructor] = useState(false);
 
   useEffect(() => {
     dispatch(GetNewIdReq());
@@ -51,7 +55,7 @@ export default function Create(props: any) {
       progLanguage: '',
       progPrice: '',
       progTagSkill: '',
-      progCreatedById: -1,
+      progCreatedById: '',
       predItemLearning: '',
       predDescription: '',
       file: '',
@@ -73,7 +77,7 @@ export default function Create(props: any) {
         payload.append("progCreatedById", values.progCreatedById);
         payload.append("predItemLearning", values.predItemLearning);
         payload.append("predDescription", values.predDescription);
-        
+
         setProgId(progEntityId);
         dispatch(ResetCurriculumState());
         dispatch(AddCurriculumReq(payload));
@@ -103,6 +107,11 @@ export default function Create(props: any) {
   const handleImageError = () => {
     setImageExists(false);
   };
+
+  const instructorOptions = instructor.map((item: any) => ({
+    value: item.userEntityId,
+    label: `${item.userFirstName} ${item.userLastName}`,
+  }))
 
   return (
     <>
@@ -153,7 +162,7 @@ export default function Create(props: any) {
                     <div className="grid xl:grid-cols-6 gap-x-2">
                       <div className="xl:col-span-1 flex flex-col mb-3">
                         <label htmlFor="progEntityId" className="mb-2 font-medium">Program ID</label>
-                        <input type="text" id="progEntityId" placeholder="Program ID" className="input input-bordered w-full capitalize" value={progEntityId} disabled/>
+                        <input type="text" id="progEntityId" placeholder="Program ID" className="input input-bordered w-full capitalize" defaultValue={progEntityId} disabled/>
                       </div>
                       <div className="xl:col-span-5 flex flex-col mb-3">
                         <label htmlFor="progTitle" className="mb-2 font-medium">Title</label>
@@ -202,8 +211,8 @@ export default function Create(props: any) {
                           {category.map((item: any) => {
                             return (
                               <option key={item.cateId} value={item.cateId}>{item.cateName}</option>
-                            );
-                          })}
+                              );
+                            })}
                         </select>
                       </div>
                       <div className="flex flex-col mb-3">
@@ -229,32 +238,29 @@ export default function Create(props: any) {
                             <div className="w-24 mask mask-circle m-auto">
                               {
                                 formik.values.progCreatedById < 0 ? (<Image src="/userDefault.png" alt={"photo-pic"} layout="fill" objectFit="contain"/>
-                                ) : ( instructor.map((emp: any) => (
-                                  emp.userEntityId == formik.values.progCreatedById ? (
-                                    imageExists ? (
-                                      <Image src={`${config.domain}/program_entity/getImg/${emp.userPhoto}`} alt={"dss"} layout="fill" objectFit="contain" onError={handleImageError}/>
-                                    ) : ( 
-                                      <div className="avatar placeholder">
-                                        <div className="bg-neutral-focus text-neutral-content rounded-full w-24 flex flex-col">
-                                          <span className="text-sm">Image</span>
-                                          <span className="text-sm">Not Found</span>
-                                        </div>
-                                      </div> 
-                                    )
-                                  ) : (<></>)
+                                ) : ( instructor.map((emp: any, index: any) => (
+                                  <div key={index}>
+                                    {emp.userEntityId == formik.values.progCreatedById ? (
+                                      imageExists ? (
+                                        <Image src={`${config.domain}/program_entity/getImg/${emp.userPhoto}`} alt={"dss"} layout="fill" objectFit="contain" onError={handleImageError}/>
+                                      ) : ( 
+                                        <div className="avatar placeholder">
+                                          <div className="bg-neutral-focus text-neutral-content rounded-full w-24 flex flex-col">
+                                            <span className="text-sm">Image</span>
+                                            <span className="text-sm">Not Found</span>
+                                          </div>
+                                        </div> 
+                                      )
+                                    ) : (<></>)}
+                                  </div>
                                 )))
                               }
                             </div>
                         </div>
                       </div>
-                      <div className="flex flex-col justify-center xl:col-span-2 mb-3">
-                        <label htmlFor="progCreatedBy" className="mb-2 font-medium">Instructor</label>
-                        <select id="progCreatedById" className="select input-bordered w-full capitalize" defaultValue={formik.values.progCreatedById} onChange={formik.handleChange}>
-                          <option value={-1} disabled>Instructor</option>
-                          {instructor.map((emp: any) => (
-                            <option key={emp.userEntityId} value={emp.userEntityId}>{`${emp.userEntityId}. ${emp.userFirstName} ${emp.userLastName})`}</option>
-                          ))}
-                        </select>
+                      <div className="flex flex-col justify-center xl:col-span-2 mb-3 gap-2">
+                        <label htmlFor="progCreatedById" className="mb-2 font-medium">Instructor</label>
+                        <CustomSelect options={instructorOptions} defaultValue={instructorOptions.find((option: any) => option.value === formik.values.progCreatedById)} onChange={formik.setFieldValue}/>
                       </div>
                     </div>
                     <div className="flex flex-col mb-3">

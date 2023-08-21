@@ -36,9 +36,14 @@ export default function Edit(props: any) {
     props.setDisplay();
   }
   
+  console.log(`Program: ${JSON.stringify(program)}`);
+  console.log(`ProgramEntityID: ${progEntityId}`);
+  
+
+  // return <div>Loading...</div>;
   if (!program || program.length === 0) {
     // return <div>Loading...</div>;
-    return <CustomAlert alertInfo={{ showAlert: true, alertText: 'Waiting...', alertType: 'error' }} setAlert={setAlertInfo} setRefresh={setRefresh}/>
+    return <CustomAlert alertInfo={{ showAlert: true, alertText: 'Waiting...', alertType: 'success' }} setAlert={setAlertInfo} setRefresh={setRefresh}/>
   } else if (program.progEntityId && props.progEntityId) {
     return (
       <>
@@ -59,7 +64,7 @@ export default function Edit(props: any) {
                 <LogoForm program={program} setRefresh={setRefresh} setAlertInfo={setAlertInfo} setOnUpload={setOnUpload}/>
               </div>
               <div className="xl:col-span-3">
-                <EditForm program={program} option={{ category, instructor }} setAlertInfo={setAlertInfo} setAlertInfoView={props.setAlertInfo} setView={handleBackBtn} setRefresh={setRefresh} create={create} onUpload={onUpload}/>
+                <EditForm program={program} option={{ category, instructor }} setAlertInfo={setAlertInfo} setAlertInfoView={props.setAlertInfo} setView={handleBackBtn} setRefresh={setRefresh} refresh={refresh} create={create} onUpload={onUpload}/>
               </div>
             </div>
           </div>

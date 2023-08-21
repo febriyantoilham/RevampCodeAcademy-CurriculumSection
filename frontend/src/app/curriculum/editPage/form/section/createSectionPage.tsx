@@ -27,7 +27,6 @@ export default function CreateSectionPage(props: any) {
             }
             
             dispatch(AddSectionRequest(data));
-            props.refreshForm(true);
             handleChange();
             props.setAlertInfo({ showAlert: true, alertText: 'Add Section Success!', alertType: 'success'});
         },

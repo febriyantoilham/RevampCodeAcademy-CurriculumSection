@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { EditCurriculumReq } from "@/redux-saga/action/curriculumAction";
 
+
 // View
 import CreateSectionPage from "./section/createSectionPage";
 import EditSectionPage from "./section/editSectionPage";
@@ -12,10 +13,11 @@ import DeleteSection from "./section/deleteSectionPage";
 import CreateSectionDetailPage from "./section/sectionDetail/createSectionDetailPage";
 import ViewSecDet from "./section/sectionDetail/viewSectionDetailModal";
 import config from "@/config/config";
+import CustomSelect from "@/ui/customSelect";
 
 export default function EditForm(props: any) {
     const dispatch = useDispatch();
-    const [refresh, setRefresh] = useState(true);
+    const [refresh, setRefresh] = useState(props.refresh);
     const [alertInfo, setAlertInfo] = useState({ showAlert: false, alertText: '', alertType: '' });
     const program = props.program;
     const category = props.option.category;
@@ -82,8 +84,6 @@ export default function EditForm(props: any) {
             }
             }
 
-            // console.log(`Payload: ${JSON.stringify(payload)}`);
-
             if(props.onUpload){
                 props.setAlertInfo({ showAlert: true, alertText: 'Please Submit or Cancel the Image Upload!', alertType: 'error'});
             } else {
@@ -99,6 +99,11 @@ export default function EditForm(props: any) {
     const handleImageError = () => {
         setImageExists(false);
     };
+
+    const instructorOptions = instructor.map((item: any) => ({
+        value: item.userEntityId,
+        label: `${item.userFirstName} ${item.userLastName}`,
+    }))
 
     if (!program || program.length === 0) {
         return <div>Loading...</div>;
@@ -207,12 +212,13 @@ export default function EditForm(props: any) {
                                 </div>
                                 <div className="flex flex-col justify-center xl:col-span-2 mb-3">
                                     <label htmlFor="progCreatedBy" className="mb-2 font-medium">Instructor</label>
-                                    <select id="progCreatedById" className="select input-bordered w-full capitalize font-normal" defaultValue={formik.values.progCreatedById} onChange={formik.handleChange}>
+                                    {/* <select id="progCreatedById" className="select input-bordered w-full capitalize font-normal" defaultValue={formik.values.progCreatedById} onChange={formik.handleChange}>
                                     <option value={-1} disabled>Instructor</option>
                                     {instructor.map((emp: any) => (
-                                        <option key={emp.userEntityId} value={emp.userEntityId}>{`${emp.userEntityId}. ${emp.userFirstName} ${emp.userLastName})`}</option>
+                                        <option key={emp.userEntityId} value={emp.userEntityId}>{`${emp.userFirstName} ${emp.userLastName}`}</option>
                                     ))}
-                                    </select>
+                                    </select> */}
+                                    <CustomSelect options={instructorOptions} defaultValue={instructorOptions.find((option: any) => option.value === formik.values.progCreatedById)} onChange={formik.setFieldValue}/>
                                 </div>
                             </div>
                             <div className="flex flex-col mb-3">
@@ -228,11 +234,11 @@ export default function EditForm(props: any) {
                             <hr className="mt-3 mb-6"/>
                             <div className="flex justify-between items-center">
                                 <p className="p-0 m-0 font-medium text-base uppercase">Materi (Section & Sub Section)</p>
-                                <CreateSectionPage progId={program.progEntityId} refreshPage={props.setRefresh} refreshForm={setRefresh} setAlertInfo={props.setAlertInfo}/>
+                                <CreateSectionPage progId={program.progEntityId} refreshForm={setRefresh} setAlertInfo={props.setAlertInfo}/>
                             </div>
                             <div className="mt-3">
-                                { program?.sections?.length !== 0 ? (
-                                program?.sections?.map((section: any)=>(
+                                { program.sections.length !== 0 ? (
+                                program.sections.map((section: any)=>(
                                 <>
                                     <div className="card card-compact w-full bg-base-200 mb-5">
                                         <div className="card-body">

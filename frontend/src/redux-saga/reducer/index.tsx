@@ -1,6 +1,6 @@
 import { combineReducers } from "redux";
 import CurriculumReducer from "./curriculumReducer";
-import programEntityReducer from "./programEntity/programEntityReducer";
+import programEntityReducer from "./programEntityReducer";
 import CategoryReducer from "./categoryReducer";
 import SectionReducer from "./sectionReducer";
 import SectionDetailReducer from "./sectionDetailReducer";

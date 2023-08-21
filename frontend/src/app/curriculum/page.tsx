@@ -72,8 +72,8 @@ export default function Page() {
     setStatus('');
     setStatusLabel('Pilih Status');
     setSelectedItem([]);
-    setRefresh(true);
     setSelectedAll(false);
+    setRefresh(true);
   };
 
   const onClick = (page: number) => {
@@ -100,8 +100,8 @@ export default function Page() {
 
   const handleSelectAll = () => {
     if (selectAll){
-    } else {
       setSelectedItem([]);
+    } else {
       const allItems = curriculum.data.map((program:any) => program.progEntityId);
       setSelectedItem(allItems);
     }
