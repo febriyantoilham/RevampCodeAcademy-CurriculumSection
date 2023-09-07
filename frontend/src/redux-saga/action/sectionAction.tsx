@@ -63,3 +63,8 @@ export const DeleteSectionFailed = (payload : any) => ({
     type: Action.DELETE_SECTION_FAILED,
     payload
 })
+
+// Reset
+export const ResetSectionState = () => ({
+    type: 'RESET_SECTION_STATE'
+})

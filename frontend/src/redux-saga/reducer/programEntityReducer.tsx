@@ -2,6 +2,7 @@ import * as ActionType from '../constant/curriculumConstant';
 
 const GET_ONE_STATE = {
     program: [],
+    progEntityId: null,
 }
 
 const programEntityReducer = (state = GET_ONE_STATE, action: any) => {

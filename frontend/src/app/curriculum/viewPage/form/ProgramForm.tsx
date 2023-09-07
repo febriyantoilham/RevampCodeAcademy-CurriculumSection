@@ -58,7 +58,11 @@ export default function ProgramForm(props: any) {
                                 <label htmlFor="progCateId" className="mb-2 font-medium">Program Category</label>
                                 {program.progCateId !== null ? (
                                     category.map((item: any) => (
-                                        item.cateId === program.progCateId ? (<input key={item.cateId} type="text" id="progCateId" placeholder="Program Category" className="input input-bordered w-full capitalize" value={item.cateName} disabled/>):(<></>)    
+                                        <div key={item.cateId}>
+                                            {
+                                                item.cateId === program.progCateId ? (<input key={item.cateId} type="text" id="progCateId" placeholder="Program Category" className="input input-bordered w-full capitalize" value={item.cateName} disabled/>):(<></>)    
+                                            }
+                                        </div>
                                     ))
                                 ) : (
                                     <input type="text" id="progCateId" placeholder="Program Category" className="input input-bordered w-full capitalize" disabled/>
@@ -82,7 +86,8 @@ export default function ProgramForm(props: any) {
                                 <div className="avatar">
                                     <div className="w-24 mask mask-squircle m-auto">
                                     {instructor.map((emp: any) => (
-                                        emp.userEntityId == program.progCreatedById ? (
+                                        <div key={emp.userEntityId}>
+                                        {emp.userEntityId == program.progCreatedById ? (
                                             imageExists ? (
                                             <Image src={`${config.domain}/program_entity/getImg/${emp.userPhoto}`} alt={"dss"} layout="fill" objectFit="contain" onError={handleImageError}/>
                                             ) : ( 
@@ -93,15 +98,18 @@ export default function ProgramForm(props: any) {
                                                 </div>
                                             </div> 
                                             )
-                                        ) : (<></>)
+                                        ) : (<></>)}
+                                        </div>
                                     ))}
                                     </div>
                                 </div>
                             </div>
                             <div className="flex flex-col justify-center xl:col-span-2 mb-3">
                             <label htmlFor="progCreatedBy" className="mb-2 font-medium">Instructor</label>
-                                {instructor.map((emp: any, index: any) => (
-                                    emp.userEntityId == program.progCreatedById ? (<input key={emp.userE} type="text" id="progCreatedById" placeholder="Program Instructor" className="input input-bordered w-full capitalize" value={`${emp.userFirstName} ${emp.userLastName}` } disabled/>) : (<></>)
+                                {instructor.map((emp: any) => (
+                                    <div key={emp.userEntityId}>{
+                                    emp.userEntityId == program.progCreatedById ? (<input type="text" id="progCreatedById" placeholder="Program Instructor" className="input input-bordered w-full capitalize" value={`${emp.userFirstName} ${emp.userLastName}` } disabled/>) : (<></>)
+                                    }</div>
                                 ))}
                             </div>
                         </div>
@@ -122,7 +130,7 @@ export default function ProgramForm(props: any) {
                         <div className="mt-3">
                             { program?.sections?.length !== 0 ? (
                             program?.sections?.map((section: any)=>(
-                            <>
+                            <div key={section.sectId}>
                                 <div className="card card-compact w-full bg-base-200 mb-5">
                                     <div className="card-body">
                                         <div className="flex justify-between">
@@ -133,22 +141,20 @@ export default function ProgramForm(props: any) {
                                         <div className="border border-gray-300 my-2"></div>
                                         <div className="mb-3">
                                             {section?.sectionDetails?.length !== 0 ? (
-                                            section?.sectionDetails?.map((item: any, index: any) => {
-                                                return (
-                                                    <>
+                                                section?.sectionDetails?.map((item: any, index: any) => {
+                                                    return (
                                                         <div key={item.secdId}>
                                                             <ul>
-                                                            <MediaShow sectionDetail={item} program={program.progEntityId}/>
+                                                                <MediaShow sectionDetail={item} program={program.progEntityId}/>
                                                             </ul>
                                                         </div>
-                                                    </>
+                                                    )
+                                                })
+                                                ):(
+                                                    <div className="flex flex-col gap-3 items-center">
+                                                        <div className="">The Section Material are empty, create new!</div>
+                                                    </div>
                                                 )
-                                            })
-                                            ):(
-                                                <div className="flex flex-col gap-3 items-center">
-                                                    <div className="">The Section Material are empty, create new!</div>
-                                                </div>
-                                            )
                                             }
                                         </div>
                                         {section.sectionDetails?.length !== 0 ? (
@@ -157,7 +163,7 @@ export default function ProgramForm(props: any) {
                                         ):(<></>)}
                                     </div>
                                 </div>
-                            </>
+                            </div>
                             ))) : (
                             <div className="flex justify-between items-center">
                             <div className="">The sections are not added yet, click edit program to add new section!</div>

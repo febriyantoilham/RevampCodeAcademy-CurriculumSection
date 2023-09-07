@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { useFormik } from "formik";
 
-import CustomAlert from "@/ui/alert";
+import CustomAlert from "@/app/ui/alert";
 import EditForm from "./form/form";
 import LogoForm from "./form/formLogo";
 
@@ -46,9 +46,9 @@ export default function Edit(props: any) {
     return <CustomAlert alertInfo={{ showAlert: true, alertText: 'Waiting...', alertType: 'success' }} setAlert={setAlertInfo} setRefresh={setRefresh}/>
   } else if (program.progEntityId && props.progEntityId) {
     return (
-      <>
+      <div className="card bg-base-100 shadow-xl">
         {alertInfo.showAlert && <CustomAlert alertInfo={alertInfo} setAlert={setAlertInfo} setRefresh={setRefresh}/>}
-        <div className=''>
+        <div className='card-body'>
           <div className='py-2'>
             <div className='flex justify-between items-center gap-4'>
                 <div className='text-xl font-medium'>{create ? (<>Create</>):(<>Edit</>)} Curriculum</div>
@@ -69,7 +69,7 @@ export default function Edit(props: any) {
             </div>
           </div>
         </div>
-      </>
+      </div>
     )
   } else {
     return <div>Loading...</div>;

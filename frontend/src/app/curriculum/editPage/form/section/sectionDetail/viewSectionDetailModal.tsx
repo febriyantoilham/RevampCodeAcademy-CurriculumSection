@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import CustomAlert from "@/ui/alert";
+import CustomAlert from "@/app/ui/alert";
 import { useFormik } from "formik";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";

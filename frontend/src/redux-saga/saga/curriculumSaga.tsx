@@ -1,5 +1,5 @@
 import { call, put } from "redux-saga/effects";
-import { AddCurriculumFailed, AddCurriculumSuccess, DeleteBundleCurriculumFailed, DeleteBundleCurriculumSuccess, DeleteCurriculumSuccess, EditCurriculumFailed, EditCurriculumReq, EditCurriculumSuccess, GetCatFailed, GetCatSuccess, GetCurriculumFailed, GetCurriculumSuccess, GetNewIdFailed, GetNewIdSuccess, GetOneCurriculumFailed, GetOneCurriculumSuccess, SearchCurriculumFailed, SearchCurriculumSuccess } from "../action/curriculumAction";
+import { AddCurriculumFailed, AddCurriculumSuccess, DeleteBundleCurriculumFailed, DeleteBundleCurriculumSuccess, DeleteCurriculumSuccess, EditCurriculumFailed, EditCurriculumSuccess, GetCatFailed, GetCatSuccess, GetCurriculumFailed, GetCurriculumSuccess, GetNewIdFailed, GetNewIdSuccess, GetOneCurriculumFailed, GetOneCurriculumSuccess, SearchCurriculumFailed, SearchCurriculumSuccess } from "../action/curriculumAction";
 import curriculum from "@/api/curriculum";
 
 function* handleGetCurriculum(action: any): any {

@@ -1,6 +1,6 @@
 import { call, put } from "redux-saga/effects";
 import sectionDetail from "@/api/sectionDetail";
-import { DeleteOneSectionDetailSuccess, DeleteOneSectionDetailFailed, CreateSectionDetailSuccess, CreateSectionDetailFailed, GetAllSectionDetailSuccess, GetAllSectionDetailFailed, UpdateSectionDetailSuccess, UpdateSectionDetailFailed } from "../action/sectionDetailAction";
+import { DeleteOneSectionDetailSuccess, DeleteOneSectionDetailFailed, CreateSectionDetailSuccess, CreateSectionDetailFailed, GetAllSectionDetailSuccess, GetAllSectionDetailFailed, UpdateSectionDetailSuccess, UpdateSectionDetailFailed, GetOneSectionDetailSuccess, GetOneSectionDetailFailed } from "../action/sectionDetailAction";
 import { GetOneCurriculumFailed, GetOneCurriculumSuccess } from "../action/curriculumAction";
 
 function* handleAddSectionDetail(action: any): any {
@@ -18,9 +18,9 @@ function* handleGetOneSectionDetail(action: any): any {
     const { payload } = action;
     try {
         const result = yield call(sectionDetail.getOneSectionDetail, payload)
-        yield put(GetOneCurriculumSuccess(result.data))
+        yield put(GetOneSectionDetailSuccess(result.data))
     } catch (error) {
-        yield put(GetOneCurriculumFailed(error))
+        yield put(GetOneSectionDetailFailed(error))
     }
 }
 

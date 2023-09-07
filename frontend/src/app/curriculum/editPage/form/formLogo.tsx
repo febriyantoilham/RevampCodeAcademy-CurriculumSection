@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { useFormik } from "formik";
 import config from "@/config/config";
-import CustomAlert from "@/ui/alert";
+import CustomAlert from "@/app/ui/alert";
 
 export default function LogoForm(props: any) {
   const dispatch = useDispatch();
@@ -98,7 +98,7 @@ export default function LogoForm(props: any) {
                         <div className="flex justify-center flex-col">
                             <input type="file" id="file" name="file" className="file-input file-input-bordered w-full max-w-xs m-auto" onChange={uploadConfig('file')}/>
                             <div className="flex justify-center">
-                            <a className="btn btn-error btn-sm text-center mt-5 mx-2" onClick={(event) => {setChangeImage(false); onClear(event)}}>Cancel</a>
+                            <a className="btn btn-error btn-outline btn-sm text-center mt-5 mx-2" onClick={(event) => {setChangeImage(false); onClear(event)}}>Cancel</a>
                             {upload === true ? (
                             <>
                             <a className='btn btn-primary btn-sm mt-5 mx-2' onClick={() => formik.handleSubmit()}>

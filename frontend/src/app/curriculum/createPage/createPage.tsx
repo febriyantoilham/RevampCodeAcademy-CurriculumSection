@@ -3,7 +3,7 @@ import Image from "next/image"
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { useFormik } from "formik";
-import CustomSelect from "@/ui/customSelect";
+import CustomSelect from "@/app/ui/customSelect";
 
 import EditDisplay from "../editPage/editPage";
 import config from "@/config/config";

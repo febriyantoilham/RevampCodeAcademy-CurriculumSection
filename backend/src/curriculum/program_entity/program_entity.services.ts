@@ -87,7 +87,7 @@ export class ProgramEntityService {
           },
         ],
         order: {
-          progEntityId: 'DESC', // Sort by progTitle field in ascending order. Use 'DESC' for descending.
+          progEntityId: 'DESC',
         },
       });
       totalCount = await this.serviceProgEntity.count({
@@ -115,7 +115,7 @@ export class ProgramEntityService {
         take: options.limit,
         skip: skippedItems,
         order: {
-          progEntityId: 'DESC', // Sort by progTitle field in ascending order. Use 'DESC' for descending.
+          progEntityId: 'DESC',
         },
       });
       return {
@@ -170,7 +170,7 @@ export class ProgramEntityService {
         progTagSkill: fields.progTagSkill,
         progCityId: fields.progCityId,
         progCateId: fields.progCateId,
-        progCreatedById: fields.progCreatedById, // belum di ada function cek employee instructor apa bukan
+        progCreatedById: fields.progCreatedById,
         progStatus: fields.progStatus,
       };
 
@@ -197,10 +197,6 @@ export class ProgramEntityService {
 
   public async update(file: any, id: any, fields: any) {
     try {
-      // console.log(`fields: ${JSON.stringify(fields)}`);
-      // console.log(`id: ${JSON.stringify(id)}`);
-      // console.log(`file: ${JSON.stringify(file)}`);
-
       const updateData = {
         progHeadline: fields.progHeadline,
         progTitle: fields.progTitle,
@@ -216,7 +212,7 @@ export class ProgramEntityService {
         progTagSkill: fields.progTagSkill,
         progCityId: fields.progCityId,
         progCateId: fields.progCateId,
-        progCreatedById: fields.progCreatedById, // belum di ada function cek employee instructor apa bukan
+        progCreatedById: fields.progCreatedById,
         progStatus: fields.progStatus,
       };
 
@@ -225,7 +221,6 @@ export class ProgramEntityService {
         file ? { ...updateData, progImage: file.originalname } : updateData,
       );
 
-      // if (fields.predItemLearning || fields.predDescription) {
       const desc = await this.serviceProgEntDesc.findOne({
         where: { predProgEntityId: id },
       });
@@ -246,7 +241,6 @@ export class ProgramEntityService {
           predDescription: { items: fields.predDescription },
         });
       }
-      // }
 
       const result = await this.serviceProgEntity.findOne({
         where: { progEntityId: id },

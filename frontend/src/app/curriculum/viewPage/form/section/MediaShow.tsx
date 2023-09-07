@@ -19,7 +19,7 @@ export default function MediaShow(props: any) {
     };
        
     return (
-            <div>
+            <>
                 <a className="link" onClick={handleChange}>
                     <li className="group hover:bg-base-300 flex flex-row justify-between p-2 rounded-lg">
                             <div className="flex gap-x-3 items-center">
@@ -27,7 +27,7 @@ export default function MediaShow(props: any) {
                                 <p className="text-base">{section.secdTitle}</p>
                             </div>
                             <div>
-                                    <span className="invisible group-hover:visible font-medium underline">View More</span>
+                                <span className="invisible group-hover:visible font-medium underline">View More</span>
                             </div>
                             <div className="flex gap-5"> 
                                 <p className="text-base">{section.secdMinute} Minutes</p>
@@ -42,8 +42,8 @@ export default function MediaShow(props: any) {
                 
 
                 <input type="checkbox" checked={modal} onChange={handleChange} className="modal-toggle"/>
-                <div className="modal modal-bottom sm:modal-middle m-0 p-0">
-                    <div className="modal-box sm:w-8/12 sm:max-w-full m-0 p-0">
+                <div className="modal modal-bottom sm:modal-middle m-0 p-0 overflow-hidden">
+                    <div className="modal-box sm:w-8/12 sm:max-w-full m-0 p-0 overflow-hidden">
                         <div className="card w-full shadow-xl">
                             <div className="card-body">
                                 <div className="flex justify-between items-center">
@@ -68,6 +68,6 @@ export default function MediaShow(props: any) {
                         </div>
                     </div>
                 </div>
-            </div>
+            </>
         )
 }

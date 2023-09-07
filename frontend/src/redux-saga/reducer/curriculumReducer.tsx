@@ -2,7 +2,6 @@ import * as ActionType from '../constant/curriculumConstant';
 
 const INIT_STATE = {
     curriculum: [],
-    progEntityId: null,
 }
 
 const CurriculumReducer = (state = INIT_STATE, action: any) => {
@@ -15,6 +14,10 @@ const CurriculumReducer = (state = INIT_STATE, action: any) => {
             return { ...state };
         case ActionType.SEARCH_DATA_SUCCESS:
             return SearchCurriculum(state, action);
+        case ActionType.DELETE_BUNDLE_DATA_REQ:
+            return { ...state };
+        case ActionType.DELETE_BUNDLE_DATA_SUCCESS:
+            return DeleteBundleCurriculum(action);
         default:
             return { ...state };
     }
@@ -33,6 +36,13 @@ function SearchCurriculum(state: any, action: any) {
         curriculum: action.payload,
     };
 };
+
+function DeleteBundleCurriculum(action: any) {
+    const {payload} = action
+    return {
+        curriculum: [payload],
+    };
+}
 
 export default CurriculumReducer
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import CustomAlert from "@/ui/alert";
+import CustomAlert from "@/app/ui/alert";
 import { useFormik } from "formik";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,7 +13,7 @@ import DeleteSection from "./section/deleteSectionPage";
 import CreateSectionDetailPage from "./section/sectionDetail/createSectionDetailPage";
 import ViewSecDet from "./section/sectionDetail/viewSectionDetailModal";
 import config from "@/config/config";
-import CustomSelect from "@/ui/customSelect";
+import CustomSelect from "@/app/ui/customSelect";
 
 export default function EditForm(props: any) {
     const dispatch = useDispatch();

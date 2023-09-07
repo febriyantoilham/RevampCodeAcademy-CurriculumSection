@@ -19,7 +19,7 @@ export default function CreateSectionPage(props: any) {
         enableReinitialize: true,
         onSubmit: async (values: any) => {
             const data = {
-              id: props.progId,
+              id: props.program.progEntityId,
               data: {
                 sectTitle: values.sectTitle,
                 sectDescription: values.sectDescription,
@@ -34,12 +34,12 @@ export default function CreateSectionPage(props: any) {
 
     return (
         <>
-            <a className="btn btn-neutral btn-sm" onClick={handleChange}>
+            <button type="button" className="btn btn-neutral btn-sm" onClick={handleChange} disabled={props.program.length === 0 && true}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span>Add New Section</span>
-            </a>
+            </button>
 
             <input type="checkbox" checked={modal} onChange={handleChange} className="modal-toggle"/>
             <div className="modal modal-bottom sm:modal-middle">

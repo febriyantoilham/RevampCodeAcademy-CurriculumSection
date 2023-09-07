@@ -22,6 +22,8 @@ const SectionReducer = (state = INIT_STATE, action: any) => {
             return { ...state };
         case ActionType.DELETE_SECTION_SUCCESS:
             return DeleteSection(action);
+        case 'RESET_SECTION_STATE':
+            return INIT_STATE;
         default:
             return { ...state };
     }
@@ -33,14 +35,6 @@ function GetSection(state: any, action: any) {
         section: action.payload,
     };
 };
-
-function SearchSection(state: any, action: any) {
-    return {
-        ...state,
-        section: action.payload,
-    };
-};
-
 
 function AddSection(state: any, action: any) {
     return {

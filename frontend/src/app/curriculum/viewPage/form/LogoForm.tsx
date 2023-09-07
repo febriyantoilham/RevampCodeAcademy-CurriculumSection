@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { useFormik } from "formik";
 import config from "@/config/config";
-import CustomAlert from "@/ui/alert";
+import CustomAlert from "@/app/ui/alert";
 
 export default function LogoForm(props: any) {
   const [imageExists, setImageExists] = useState(true);

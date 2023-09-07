@@ -83,4 +83,20 @@ export class ProgramEntityController {
   public async getCatAndEmp() {
     return this.Service.getCatAndEmp();
   }
+
+  @Get('category')
+  /**
+   * Category
+   */
+  public async Category() {
+    return this.Service.getAllCategory();
+  }
+
+  @Get('instructor')
+  /**
+   * Instructor
+   */
+  public Instructor() {
+    return this.Service.getAllInstructor();
+  }
 }
