@@ -52,6 +52,15 @@ import { UserExperiencesController } from 'src/users/userExperiences/userExperie
 import { JobType } from 'output/entities/JobType';
 import { JobTypeService } from 'src/master/jobType/jobType.service';
 import { JobTypeController } from 'src/master/jobType/jobType.controller';
+import { Batch } from 'output/entities/Batch';
+import { ProgramApply } from 'output/entities/ProgramApply';
+import { ProgramApplyProgress } from 'output/entities/ProgramApplyProgress';
+import { BatchTrainee } from 'output/entities/BatchTrainee';
+import { BatchTraineeEvaluation } from 'output/entities/BatchTraineeEvaluation';
+import { InstructorPrograms } from 'output/entities/InstructorPrograms';
+import { BatchService } from 'src/bootcamp/batch/batch.service';
+import { BatchController } from 'src/bootcamp/batch/batch.controller';
+import { Status } from 'output/entities/Status';
 
 @Module({
   imports: [
@@ -74,11 +83,19 @@ import { JobTypeController } from 'src/master/jobType/jobType.controller';
       Roles,
       // HR
       Employee,
+      Status,
       //Master
       Address,
       AddressType,
       City,
       JobType,
+      //Bootcamp
+      Batch,
+      BatchTrainee,
+      BatchTraineeEvaluation,
+      ProgramApply,
+      ProgramApplyProgress,
+      InstructorPrograms,
     ]),
     MulterModule.register(UploadMulter.MulterOption()),
     PassportModule,
@@ -105,6 +122,8 @@ import { JobTypeController } from 'src/master/jobType/jobType.controller';
     AddressTypeService,
     CityService,
     JobTypeService,
+    // Bootcamp
+    BatchService,
   ],
   controllers: [
     ProgramEntityController,
@@ -122,6 +141,8 @@ import { JobTypeController } from 'src/master/jobType/jobType.controller';
     AddressTypeController,
     CityController,
     JobTypeController,
+    // Bootcamp
+    BatchController,
   ],
   exports: [UsersService],
 })

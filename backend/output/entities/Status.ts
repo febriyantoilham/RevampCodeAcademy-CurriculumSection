@@ -5,25 +5,25 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-} from "typeorm";
-import { Batch } from "./Batch";
-import { EmployeeClientContract } from "./EmployeeClientContract";
-import { JobPost } from "./JobPost";
-import { ProgramApply } from "./ProgramApply";
-import { ProgramApplyProgress } from "./ProgramApplyProgress";
-import { ProgramEntity } from "./ProgramEntity";
-import { SalesOrderHeader } from "./SalesOrderHeader";
-import { Modules } from "./Modules";
-import { TalentApply } from "./TalentApply";
+} from 'typeorm';
+import { Batch } from './Batch';
+import { EmployeeClientContract } from './EmployeeClientContract';
+import { JobPost } from './JobPost';
+import { ProgramApply } from './ProgramApply';
+import { ProgramApplyProgress } from './ProgramApplyProgress';
+import { ProgramEntity } from './ProgramEntity';
+import { SalesOrderHeader } from './SalesOrderHeader';
+import { Modules } from './Modules';
+import { TalentApply } from './TalentApply';
 
-@Index("status_pkey", ["status"], { unique: true })
-@Entity("status", { schema: "master" })
+@Index('status_pkey', ['status'], { unique: true })
+@Entity('status', { schema: 'master' })
 export class Status {
-  @Column("character varying", { primary: true, name: "status", length: 15 })
+  @Column('character varying', { primary: true, name: 'status', length: 15 })
   status: string;
 
-  @Column("timestamp without time zone", {
-    name: "status_modified_date",
+  @Column('timestamp without time zone', {
+    name: 'status_modified_date',
     nullable: true,
   })
   statusModifiedDate: Date | null;
@@ -33,7 +33,7 @@ export class Status {
 
   @OneToMany(
     () => EmployeeClientContract,
-    (employeeClientContract) => employeeClientContract.eccoStatus
+    (employeeClientContract) => employeeClientContract.eccoStatus,
   )
   employeeClientContracts: EmployeeClientContract[];
 
@@ -45,7 +45,7 @@ export class Status {
 
   @OneToMany(
     () => ProgramApplyProgress,
-    (programApplyProgress) => programApplyProgress.parogStatus
+    (programApplyProgress) => programApplyProgress.parogStatus,
   )
   programApplyProgresses: ProgramApplyProgress[];
 
@@ -54,12 +54,12 @@ export class Status {
 
   @OneToMany(
     () => SalesOrderHeader,
-    (salesOrderHeader) => salesOrderHeader.soheStatus
+    (salesOrderHeader) => salesOrderHeader.soheStatus,
   )
   salesOrderHeaders: SalesOrderHeader[];
 
   @ManyToOne(() => Modules, (modules) => modules.statuses)
-  @JoinColumn([{ name: "status_module", referencedColumnName: "moduleName" }])
+  @JoinColumn([{ name: 'status_module', referencedColumnName: 'moduleName' }])
   statusModule: Modules;
 
   @OneToMany(() => TalentApply, (talentApply) => talentApply.taapStatus)
