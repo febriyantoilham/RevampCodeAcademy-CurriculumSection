@@ -13,6 +13,7 @@ import * as ActionUserExperiences from  '../constant/users/userExperiencesConsta
 import * as ActionAddressType from  '../constant/master/addressTypeConstant';
 import * as ActionCity from  '../constant/master/cityConstant';
 import * as ActionJobType from  '../constant/master/jobTypeConstant';
+import * as batch from '../constant/bootcamp/batchConstant';
 import { handleCreateCurriculum, handleDeleteBundleCurriculum, handleDeleteCurriculum, handleEditCurriculum, handleGetCategoryAndEmployee, handleGetCurriculum, handleGetNewProgramId, handleGetOneCurriculum, handleSearchCurriculum } from "./curriculumSaga";
 import { handleAddSection, handleDeleteSection, handleGetSection, handleUpdateSection } from "./sectionSaga";
 import { handleAddSectionDetail, handleDeleteOneSectionDetail, handleGetAllSectionDetail, handleGetOneSectionDetail, handleUpdateSectionDetail } from "./sectionDetailSaga";
@@ -27,6 +28,7 @@ import { getCity } from "./master/citySaga";
 import { handleCreateUserEducations, handleDeleteUserEducations, handleEditUserEducations } from "./users/userEducationsSaga";
 import { handleCreateUserExperiences, handleDeleteUserExperiences, handleEditUserExperiences } from "./users/userExperiencesSaga";
 import { handleGetJobType } from "./master/addressTypeSaga copy";
+import { bulkDelete, getBatch, getStatus } from "./bootcamp/batchSaga";
 
 
 function* watchAll(){
@@ -88,6 +90,10 @@ function* watchAll(){
         takeEvery(ActionCity.GET_CITY_REQUEST, getCity),
         // JobType
         takeEvery(ActionJobType.GET_JOB_TYPE_REQUEST, handleGetJobType),
+        // Batch
+        takeEvery(batch.GET_BATCH_REQ, getBatch),
+        takeEvery(batch.GET_STATUS_REQ, getStatus),
+        takeEvery(batch.BULK_DELETE_BATCH_REQ, bulkDelete),
     ])
 }
 

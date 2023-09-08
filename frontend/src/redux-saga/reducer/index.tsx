@@ -15,6 +15,7 @@ import cityReducer from "./master/cityReducer";
 import userEducationsReducer from "./users/userEducationsReducer";
 import userExperiencesReducer from "./users/userPhonesReducer copy";
 import JobTypeReducer from "./master/jobTypeReducer";
+import batchReducer from "./bootcamp/batchReducer";
 
 const rootReducer = combineReducers({
     curriculumState: CurriculumReducer,
@@ -33,6 +34,8 @@ const rootReducer = combineReducers({
     addressTypeState: addressTypeReducer,
     cityState: cityReducer,
     jobTypeState: JobTypeReducer,
+    // Bootcamp
+    batchState: batchReducer,
 })
 
 export default rootReducer

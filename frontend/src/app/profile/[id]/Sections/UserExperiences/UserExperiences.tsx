@@ -29,7 +29,7 @@ export default function UserExperiences(props: any) {
                         </div>
                     ))) : (
                     <div className="flex items-center gap-x-1">
-                        <p className="capitalize text-md">no education added yet, add new?</p>
+                        <p className="capitalize text-md">no experiences added yet, add new?</p>
                         <UserExperiencesModal dataUsers={user} setAlertInfo={setAlertInfo} city={city}/>
                     </div>
                     )

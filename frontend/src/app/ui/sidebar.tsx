@@ -1,19 +1,27 @@
 "use client";
+import { getUserByIdRequest } from "@/redux-saga/action/users/usersAction";
 import { getCookie } from "cookies-next";
 import Link from "next/link"
 import { usePathname } from 'next/navigation';
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Sidebar(props: any) {
   const [refresh, setRefresh] = useState(false);
+  const dispatch = useDispatch();
   const pathname = usePathname();
   const id = getCookie('userEntityId');
   const excludeRoutes = ['/', '/signin', '/signup', '/employee', '/signup/confirm', '/employee/confirm', `/profile/${id}`];
   const show = !excludeRoutes.includes(pathname);
+  const user = useSelector((state: any) => state.usersState.currentUser);
+
+  useEffect(() => {
+        dispatch(getUserByIdRequest(id));
+        setRefresh(false);
+    }, [dispatch, id, refresh])
 
   return (
-    (id && show && 
+    (id && user && show && 
       <div className="drawer lg:drawer-open z-10 min-h-full">
         <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
         <div className="drawer-side overflow-visible">
@@ -22,7 +30,7 @@ export default function Sidebar(props: any) {
             <div className="card-body">
               <ul className="flex flex-col gap-y-3">
                 {/* Sidebar content here */}
-                <li className=""><Link href={'/dashboard'} className="btn btn-outline bg-base-300 flex flex-col" style={{ border: 'none' }}>
+                <li><Link href={'/dashboard'} className="btn btn-outline bg-base-300 flex flex-col" style={{ border: 'none' }}>
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 25 25" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                   </svg>

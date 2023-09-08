@@ -15,12 +15,13 @@ export default function Dashboard() {
     setRefresh(false);
   }, [refresh, route]);
 
-  
-  return (
-    (hasCookie('access_token') &&
+  if (!hasCookie('access_token')) {
+      route.push("/signin");
+    } else {
+    return (
       <div className='w-full h-full bg-base-100 rounded-xl shadow-xl p-10'>
           <h1 className='text-xl font-medium'>Dashboard</h1>
       </div>
     )
-  )
+  }
 }
