@@ -5,6 +5,8 @@ const INIT_STATE = {
     statusList: null,
     programList: null,
     response: null,
+    instructors: null,
+    candidateList: null
 }
 
 const batchReducer = (state = INIT_STATE, action: any) => {
@@ -57,6 +59,26 @@ const batchReducer = (state = INIT_STATE, action: any) => {
             return {
                 ...state,
                 response: null,
+            }
+        case actionType.GET_INSTRUCTOR_SUCCESS:
+            return {
+                ...state,
+                instructors: action.payload,
+            }
+        case actionType.GET_INSTRUCTOR_FAIL:
+            return {
+                ...state,
+                instructors: null,
+            }
+        case actionType.GET_CANDIDATE_SUCCESS:
+            return {
+                ...state,
+                candidateList: action.payload,
+            }
+        case actionType.GET_CANDIDATE_FAIL:
+            return {
+                ...state,
+                candidateList: null,
             }
         case 'RESET_BATCH':
             return INIT_STATE;

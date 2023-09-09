@@ -96,7 +96,7 @@ export default function UserPhotoModal(props: any) {
                             <div className="w-60 mask mask-squircle">
                                 {!upload ? (
                                     dataUsers.userPhoto === null || dataUsers.userPhoto === '' ?
-                                        (<Image src="/photo-pic.jpg" alt={"x"} layout="fill" objectFit="contain"/>) :
+                                        (<Image src="/userDefault.png" alt={"x"} layout="fill" objectFit="contain"/>) :
                                         imageExists ?
                                             (<Image src={`${config.domain}/users/users/profile/photo/${dataUsers.userPhoto}`} alt={""} layout="fill" objectFit="contain" onError={handleImageError}/>):
                                             (<div className="w-full h-full bg-black flex flex-col justify-center items-center">

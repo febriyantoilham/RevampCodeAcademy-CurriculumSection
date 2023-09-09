@@ -3,7 +3,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
-import { getProgramReq } from "@/redux-saga/action/bootcamp/batchAction";
+import { getCandidateReq, getInstructorsReq, getProgramReq } from "@/redux-saga/action/bootcamp/batchAction";
 
 // Form
 import BatchForm from "./batchForm";
@@ -18,12 +18,16 @@ export default function Page() {
   const router = useRouter();
   // State
   const program = useSelector((state: any) => state.batchState.programList);
+  const instructors = useSelector((state: any) => state.batchState.instructors);
+  const candidate = useSelector((state: any) => state.batchState.candidateList);
   // useEffect
   useEffect (() => {
     if (!hasCookie('access_token')) {
       router.push('/signin');
     } else {
       dispatch(getProgramReq());
+      dispatch(getInstructorsReq());
+      dispatch(getCandidateReq());
     }
     setRefresh(false);
   }, [dispatch, refresh, router])
@@ -37,7 +41,7 @@ export default function Page() {
             <span>Back</span>
           </Link>
       </div>
-      { program && <BatchForm program={program}/> }
+      { program && instructors && candidate && <BatchForm program={program} instructors={instructors} candidate={candidate}/> }
     </div>
   )
 }

@@ -1,6 +1,7 @@
-import { bulkDeleteBatchFail, bulkDeleteBatchSuccess, createBatchFail, createBatchSuccess, getBatchFail, getBatchSuccess, getProgramFail, getProgramSuccess, getStatusFail, getStatusSuccess } from "@/redux-saga/action/bootcamp/batchAction";
+import { bulkDeleteBatchFail, bulkDeleteBatchSuccess, createBatchFail, createBatchSuccess, getBatchFail, getBatchSuccess, getCandidateFail, getCandidateSuccess, getInstructorsFail, getInstructorsSuccess, getProgramFail, getProgramSuccess, getStatusFail, getStatusSuccess } from "@/redux-saga/action/bootcamp/batchAction";
 import { call, put } from "redux-saga/effects";
 import batch from '@/api/bootcamp/batch'
+import instructorPrograms from "@/api/bootcamp/instructorPrograms";
 
 export function* getStatus(): any {
     try {
@@ -11,12 +12,30 @@ export function* getStatus(): any {
     }
 }
 
+export function* getInstructor(): any {
+    try {
+        const result = yield call(instructorPrograms.getInstructorList);
+        yield put(getInstructorsSuccess(result));
+    } catch (error) {
+        yield put(getInstructorsFail(error));
+    }
+}
+
 export function* getProgram(): any {
     try {
         const result = yield call(batch.getProgramList);
         yield put(getProgramSuccess(result));
     } catch (error) {
         yield put(getProgramFail(error));
+    }
+}
+
+export function* getCandidate(): any {
+    try {
+        const result = yield call(batch.getCandidateList);
+        yield put(getCandidateSuccess(result));
+    } catch (error) {
+        yield put(getCandidateFail(error));
     }
 }
 

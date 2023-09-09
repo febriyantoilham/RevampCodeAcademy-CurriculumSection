@@ -20,6 +20,14 @@ const getProgramList = async () => {
     }
 }
 
+const getCandidateList = async () => {
+    try {
+        const result = await axios.get(`${config.domain}/bootcamp/batch/candidate_list`);
+        return result.data;
+    } catch (error) {
+        return error;
+    }
+}
 
 const getBatch = async (payload: any) => {
     try {
@@ -52,4 +60,4 @@ const createBatch = async (payload: any) => {
     }
 }
 
-export default { getStatusList, getProgramList, getBatch, bulkDelete, createBatch }
+export default { getStatusList, getProgramList, getCandidateList, getBatch, bulkDelete, createBatch }

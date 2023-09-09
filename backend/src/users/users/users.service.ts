@@ -369,6 +369,9 @@ export class UsersService {
         await this.serviceUserEmails.delete({ pmailEntityId: id });
         await this.serviceUserPhones.delete({ uspoEntityId: id });
         await this.serviceUserRoles.delete({ usroEntityId: id });
+        await this.serviceUserAddress.delete({ etadEntityId: id });
+        await this.serviceUserEducations.delete({ usduEntityId: id });
+        await this.serviceUserExperiences.delete({ usexEntityId: id });
         await this.serviceUsers.remove(users);
         await this.businessEntityService.delete(id);
         return {

@@ -8,6 +8,10 @@ import { Like, Repository } from 'typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Status } from 'output/entities/Status';
+import { InstructorPrograms } from 'output/entities/InstructorPrograms';
+import { Users } from 'output/entities/Users';
+import { BatchTrainee } from 'output/entities/BatchTrainee';
+import { UsersRoles } from 'output/entities/UsersRoles';
 
 @Injectable()
 export class BatchService {
@@ -18,8 +22,16 @@ export class BatchService {
     private serviceEmployee: Repository<Employee>,
     @InjectRepository(Batch)
     private serviceBatch: Repository<Batch>,
+    @InjectRepository(InstructorPrograms)
+    private serviceInstructorPrograms: Repository<InstructorPrograms>,
+    @InjectRepository(BatchTrainee)
+    private serviceBatchTrainee: Repository<BatchTrainee>,
     @InjectRepository(Status)
     private serviceStatus: Repository<Status>,
+    @InjectRepository(Users)
+    private serviceUsers: Repository<Users>,
+    @InjectRepository(UsersRoles)
+    private serviceUsersRoles: Repository<UsersRoles>,
   ) {}
 
   public async getImg(imageName: any, res: any) {
@@ -80,6 +92,23 @@ export class BatchService {
     return program;
   }
 
+  public async getCandidate() {
+    const program = await this.serviceUsers.find({
+      where: { userCurrentRole: 1 },
+      relations: { usersEducations: true },
+      select: {
+        userEntityId: true,
+        userFirstName: true,
+        userLastName: true,
+        userModifiedDate: true,
+        userPhoto: true,
+      },
+      order: { userEntityId: 'ASC' },
+    });
+
+    return program;
+  }
+
   public async getAll(options: BootcampOptions) {
     const skippedItems = (options.page - 1) * options.limit;
     const totalCount = await this.serviceBatch.count();
@@ -102,6 +131,7 @@ export class BatchService {
           relations: {
             batchEntity: { progCreatedBy: { empEntity: true } },
             batchTrainees: { batrTraineeEntity: true },
+            instructorPrograms: true,
           },
           select: {
             batchEntity: {
@@ -120,6 +150,7 @@ export class BatchService {
                 },
               },
             },
+            batchTrainees: true,
           },
           take: options.limit,
           skip: skippedItems,
@@ -150,6 +181,29 @@ export class BatchService {
           relations: {
             batchEntity: { progCreatedBy: { empEntity: true } },
             batchTrainees: { batrTraineeEntity: true },
+            instructorPrograms: true,
+          },
+          select: {
+            batchEntity: {
+              progEntityId: true,
+              progTitle: true,
+              progHeadline: true,
+              progType: true,
+              progLearningType: true,
+              progImage: true,
+              progCreatedBy: {
+                empEntityId: true,
+                empEntity: {
+                  userFirstName: true,
+                  userLastName: true,
+                  userPhoto: true,
+                },
+              },
+            },
+            batchTrainees: {
+              batrId: true,
+              batrTraineeEntity: { userEntityId: true, userPhoto: true },
+            },
           },
           take: options.limit,
           skip: skippedItems,
@@ -176,12 +230,65 @@ export class BatchService {
     try {
       const batch = await this.serviceBatch.find({
         where: { batchEntityId: options.progEntityId },
-        // relations: {
-        //   batchEntity: { progCreatedBy: { empEntity: true } },
-        //   batchTrainees: { batrTraineeEntity: true },
-        // },
+        relations: {
+          batchEntity: { progCreatedBy: { empEntity: true } },
+          batchTrainees: { batrTraineeEntity: true },
+          instructorPrograms: true,
+        },
+        select: {
+          batchEntity: {
+            progEntityId: true,
+            progTitle: true,
+            progHeadline: true,
+            progType: true,
+            progLearningType: true,
+            progImage: true,
+            progCreatedBy: {
+              empEntityId: true,
+              empEntity: {
+                userFirstName: true,
+                userLastName: true,
+                userPhoto: true,
+              },
+            },
+          },
+        },
       });
       return { success: true, data: batch };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  public async getByBatchId(id: number) {
+    try {
+      const result = await this.serviceBatch.findOne({
+        where: { batchId: id },
+        relations: {
+          batchEntity: { progCreatedBy: { empEntity: true } },
+          batchTrainees: { batrTraineeEntity: true },
+          instructorPrograms: true,
+        },
+        select: {
+          batchEntity: {
+            progEntityId: true,
+            progTitle: true,
+            progHeadline: true,
+            progType: true,
+            progLearningType: true,
+            progImage: true,
+            progCreatedBy: {
+              empEntityId: true,
+              empEntity: {
+                userFirstName: true,
+                userLastName: true,
+                userPhoto: true,
+              },
+            },
+          },
+        },
+      });
+      return { success: true, data: result };
     } catch (error) {
       return { success: false, error: error.message };
     }
@@ -203,6 +310,7 @@ export class BatchService {
     return result;
   }
 
+  /* Create */
   public async create(fields: any) {
     const batchData = {
       batchEntityId: fields.batchEntityId,
@@ -217,8 +325,7 @@ export class BatchService {
       batchPicId: fields.batchPicId, // From user.userEntityId
     };
 
-    const batchTraineeData = {};
-    const instructorsData = {};
+    const batchTraineeData = fields.batchTraineeData;
 
     try {
       if (!fields.batchPicId) {
@@ -238,10 +345,39 @@ export class BatchService {
       // Save Batch
       const result = await this.serviceBatch.save({ ...batchData });
 
+      if (!result) {
+        return { success: false, error: 'Failed!' };
+      }
+
+      const instructorsData = [
+        {
+          batchId: result.batchId,
+          inproEntityId: fields.batchEntityId,
+          inproEmpEntityId: fields.inproEmpEntityId,
+          inproModifiedDate: new Date(),
+        },
+      ];
+
+      const resultInstructor = await this.serviceInstructorPrograms.save(
+        instructorsData,
+      );
+
+      for (const trainee of batchTraineeData) {
+        await this.serviceBatchTrainee.save({
+          batrTraineeEntityId: trainee,
+          batrBatchId: result.batchId,
+        });
+
+        await this.serviceUsersRoles.save({
+          usroEntityId: trainee,
+          usroRoleId: 9,
+        });
+
+        await this.serviceUsers.update(trainee, { userCurrentRole: 9 });
+      }
+
       // Get New Batch Data
-      const newBatch = await this.serviceBatch.findOne({
-        where: { batchId: result.batchId },
-      });
+      const newBatch = this.getByBatchId(result.batchId);
 
       console.log(`Result: ${JSON.stringify(newBatch)}`);
       return newBatch;
@@ -340,6 +476,32 @@ export class BatchService {
       for (const id of fields) {
         const batchData = await this.serviceBatch.findOne({
           where: { batchId: id },
+        });
+
+        if (!batchData) {
+          return {
+            success: false,
+            error: `Batch id ${batchData.batchId} not found!`,
+          };
+        }
+
+        if (batchData.batchPicId === null) {
+          return {
+            success: false,
+            error: `Pic Id in batch id ${batchData.batchId} is null!`,
+          };
+        }
+
+        const instructorData = await this.serviceInstructorPrograms.find({
+          where: { batchId: batchData.batchId },
+        });
+
+        if (instructorData) {
+          await this.serviceInstructorPrograms.remove(instructorData);
+        }
+
+        await this.serviceBatchTrainee.delete({
+          batrBatchId: batchData.batchId,
         });
 
         await this.serviceBatch.remove(batchData);

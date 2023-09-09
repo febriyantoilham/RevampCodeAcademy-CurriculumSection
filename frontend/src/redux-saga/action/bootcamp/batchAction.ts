@@ -20,6 +20,21 @@ export const getStatusFail = (error: any) => ({
     payload: error,
 })
 
+// Get Instructor
+export const getInstructorsReq = () => ({
+    type: action.GET_INSTRUCTOR_REQ,
+});
+
+export const getInstructorsSuccess = (result: any) => ({
+    type: action.GET_INSTRUCTOR_SUCCESS,
+    payload: result,
+})
+
+export const getInstructorsFail = (error: any) => ({
+    type: action.GET_INSTRUCTOR_FAIL,
+    payload: error,
+})
+
 // Get Program
 export const getProgramReq = () => ({
     type: action.GET_PROGRAM_REQ,
@@ -32,6 +47,21 @@ export const getProgramSuccess = (result: any) => ({
 
 export const getProgramFail = (error: any) => ({
     type: action.GET_PROGRAM_FAIL,
+    payload: error,
+})
+
+// Get Candidate
+export const getCandidateReq = () => ({
+    type: action.GET_CANDIDATE_REQ,
+});
+
+export const getCandidateSuccess = (result: any) => ({
+    type: action.GET_CANDIDATE_SUCCESS,
+    payload: result,
+})
+
+export const getCandidateFail = (error: any) => ({
+    type: action.GET_CANDIDATE_FAIL,
     payload: error,
 })
 

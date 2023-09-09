@@ -5,6 +5,7 @@ import UsersModal from "./UsersModal";
 export default function Users(props: any) {
     const user = props.user;
     const setAlertInfo = props.setAlertInfo;
+    const currentRole = user.usersRoles.find((roles: any) => roles.usroRoleId === user.userCurrentRole);
 
     return (
       <div className="flex flex-col gap-2 w-full bg-base-200 rounded-xl shadow-sm px-5 py-3">
@@ -22,7 +23,7 @@ export default function Users(props: any) {
                   </div>
                   <div className="flex-1 w-full flex gap-3">
                     <div className="flex-none capitalize text-gray-700">Status/Position :</div>
-                    <div className="flex-1 capitalize">{user.usersRoles[0].usroRole.roleName}</div>
+                    <div className="flex-1 capitalize">{currentRole.usroRole.roleName}</div>
                   </div>
                   <div className="flex-1 w-full flex gap-3">
                     <div className="flex-none capitalize text-gray-700">Birthday :</div>

@@ -61,6 +61,8 @@ import { InstructorPrograms } from 'output/entities/InstructorPrograms';
 import { BatchService } from 'src/bootcamp/batch/batch.service';
 import { BatchController } from 'src/bootcamp/batch/batch.controller';
 import { Status } from 'output/entities/Status';
+import { InstructorProgramsService } from 'src/bootcamp/instructorPrograms/instructorPrograms.service';
+import { instructorProgramsController } from 'src/bootcamp/instructorPrograms/instructorPrograms.controller';
 
 @Module({
   imports: [
@@ -124,6 +126,7 @@ import { Status } from 'output/entities/Status';
     JobTypeService,
     // Bootcamp
     BatchService,
+    InstructorProgramsService,
   ],
   controllers: [
     ProgramEntityController,
@@ -143,6 +146,7 @@ import { Status } from 'output/entities/Status';
     JobTypeController,
     // Bootcamp
     BatchController,
+    instructorProgramsController,
   ],
   exports: [UsersService],
 })

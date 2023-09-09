@@ -31,6 +31,11 @@ export class BatchController {
     return this.service.getProgram();
   }
 
+  @Get('candidate_list')
+  public async getCandidate() {
+    return this.service.getCandidate();
+  }
+
   @Get('paging')
   public async getAll(@Query() options: BootcampDto) {
     return this.service.getAll(options);
@@ -39,6 +44,11 @@ export class BatchController {
   @Get('batch_per_program')
   public async getByProgId(@Query() options: BootcampDto) {
     return this.service.getByProgId(options);
+  }
+
+  @Get(':id')
+  public async getByBatchId(@Param('id') id: number) {
+    return this.service.getByBatchId(id);
   }
 
   @Post('create')

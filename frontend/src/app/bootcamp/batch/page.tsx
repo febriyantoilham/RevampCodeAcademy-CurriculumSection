@@ -144,7 +144,7 @@ export default function Batch() {
                                         {item.batchTrainees.slice(0, membersLimit).map((trainee: any, index: any) => (
                                             <div key={index} className="avatar">
                                                 <div className="w-12">
-                                                    <Image src={`${config.domain}/bootcamp/batch/getImg/${trainee.batrTraineeEntity.userPhoto}`} alt="" width={100} height={100}/> :
+                                                    <Image src={`${config.domain}/bootcamp/batch/getImg/${trainee.batrTraineeEntity.userPhoto}`} alt="" width={100} height={100}/>
                                                 </div>
                                             </div>
                                         ))}
