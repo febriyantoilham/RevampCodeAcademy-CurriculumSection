@@ -57,6 +57,29 @@ export class BatchService {
     return statusList;
   }
 
+  public async getProgram() {
+    const program = await this.serviceProgramEntity.find({
+      relations: { progCreatedBy: { empEntity: true } },
+      select: {
+        progEntityId: true,
+        progTitle: true,
+        progLearningType: true,
+        progCreatedBy: {
+          empEntityId: true,
+          empEntity: {
+            userFirstName: true,
+            userLastName: true,
+          },
+        },
+      },
+      order: {
+        progEntityId: 'DESC',
+      },
+    });
+
+    return program;
+  }
+
   public async getAll(options: BootcampOptions) {
     const skippedItems = (options.page - 1) * options.limit;
     const totalCount = await this.serviceBatch.count();
@@ -79,6 +102,24 @@ export class BatchService {
           relations: {
             batchEntity: { progCreatedBy: { empEntity: true } },
             batchTrainees: { batrTraineeEntity: true },
+          },
+          select: {
+            batchEntity: {
+              progEntityId: true,
+              progTitle: true,
+              progHeadline: true,
+              progType: true,
+              progLearningType: true,
+              progImage: true,
+              progCreatedBy: {
+                empEntityId: true,
+                empEntity: {
+                  userFirstName: true,
+                  userLastName: true,
+                  userPhoto: true,
+                },
+              },
+            },
           },
           take: options.limit,
           skip: skippedItems,

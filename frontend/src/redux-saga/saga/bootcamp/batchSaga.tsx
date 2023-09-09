@@ -1,4 +1,4 @@
-import { bulkDeleteBatchFail, bulkDeleteBatchSuccess, getBatchFail, getBatchSuccess, getStatusFail, getStatusSuccess } from "@/redux-saga/action/bootcamp/batchAction";
+import { bulkDeleteBatchFail, bulkDeleteBatchSuccess, createBatchFail, createBatchSuccess, getBatchFail, getBatchSuccess, getProgramFail, getProgramSuccess, getStatusFail, getStatusSuccess } from "@/redux-saga/action/bootcamp/batchAction";
 import { call, put } from "redux-saga/effects";
 import batch from '@/api/bootcamp/batch'
 
@@ -8,6 +8,15 @@ export function* getStatus(): any {
         yield put(getStatusSuccess(result));
     } catch (error) {
         yield put(getStatusFail(error));
+    }
+}
+
+export function* getProgram(): any {
+    try {
+        const result = yield call(batch.getProgramList);
+        yield put(getProgramSuccess(result));
+    } catch (error) {
+        yield put(getProgramFail(error));
     }
 }
 
@@ -28,5 +37,15 @@ export function* bulkDelete(action: any): any {
         yield put(bulkDeleteBatchSuccess(result));
     } catch (error) {
         yield put(bulkDeleteBatchFail(error));
+    }
+}
+
+export function* createBatch(action: any): any {
+    const { payload } = action;
+    try {
+        const result = yield call(batch.createBatch, payload);
+        yield put(createBatchSuccess(result));
+    } catch (error) {
+        yield put(createBatchFail(error));
     }
 }

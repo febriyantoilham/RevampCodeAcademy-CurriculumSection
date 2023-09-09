@@ -28,7 +28,7 @@ import { getCity } from "./master/citySaga";
 import { handleCreateUserEducations, handleDeleteUserEducations, handleEditUserEducations } from "./users/userEducationsSaga";
 import { handleCreateUserExperiences, handleDeleteUserExperiences, handleEditUserExperiences } from "./users/userExperiencesSaga";
 import { handleGetJobType } from "./master/addressTypeSaga copy";
-import { bulkDelete, getBatch, getStatus } from "./bootcamp/batchSaga";
+import { bulkDelete, createBatch, getBatch, getProgram, getStatus } from "./bootcamp/batchSaga";
 
 
 function* watchAll(){
@@ -93,7 +93,9 @@ function* watchAll(){
         // Batch
         takeEvery(batch.GET_BATCH_REQ, getBatch),
         takeEvery(batch.GET_STATUS_REQ, getStatus),
+        takeEvery(batch.GET_PROGRAM_REQ, getProgram),
         takeEvery(batch.BULK_DELETE_BATCH_REQ, bulkDelete),
+        takeEvery(batch.CREATE_BATCH_REQ, createBatch),
     ])
 }
 

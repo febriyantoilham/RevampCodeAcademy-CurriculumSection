@@ -82,10 +82,12 @@ export default function Batch() {
     }
 
     return (
-        <div className='bg-base-100 rounded-xl shadow-xl max-md:p-5 p-8 h-full'>
+        <div className='bg-base-100 rounded-xl shadow-xl max-md:p-5 p-8 h-full flex flex-col gap-y-10'>
             {alertInfo.showAlert && <CustomAlert alertInfo={alertInfo} setAlert={setAlertInfo} refresh={refresh} setRefresh={setRefresh}/>}
-            <div className='text-xl font-bold'>Batch</div>
-            <div className="divider"></div>
+            <div className="flex justify-between">
+                <div className='text-xl font-bold'>Batch</div>
+                <Link href={'/bootcamp/batch/create'} className="uppercase btn btn-primary">create new batch</Link>
+            </div>
             <div className="w-full grid grid-cols-7 justify-between">
                 <div className="col-span-1">
                 {selectedItem.length > 0 &&

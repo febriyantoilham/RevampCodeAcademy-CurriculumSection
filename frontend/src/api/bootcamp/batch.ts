@@ -11,6 +11,15 @@ const getStatusList = async () => {
     }
 }
 
+const getProgramList = async () => {
+    try {
+        const result = await axios.get(`${config.domain}/bootcamp/batch/program_list`);
+        return result.data;
+    } catch (error) {
+        return error;
+    }
+}
+
 
 const getBatch = async (payload: any) => {
     try {
@@ -34,4 +43,13 @@ const bulkDelete = async (payload: any) => {
     }
 }
 
-export default { getStatusList, getBatch, bulkDelete }
+const createBatch = async (payload: any) => {
+    try {
+        const result = await axios.post(`${config.domain}/bootcamp/batch/create`, payload)
+        return result
+    } catch (error) {
+        return error;
+    }
+}
+
+export default { getStatusList, getProgramList, getBatch, bulkDelete, createBatch }

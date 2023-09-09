@@ -26,6 +26,11 @@ export class BatchController {
     return this.service.getStatus();
   }
 
+  @Get('program_list')
+  public async getProgram() {
+    return this.service.getProgram();
+  }
+
   @Get('paging')
   public async getAll(@Query() options: BootcampDto) {
     return this.service.getAll(options);

@@ -20,6 +20,21 @@ export const getStatusFail = (error: any) => ({
     payload: error,
 })
 
+// Get Program
+export const getProgramReq = () => ({
+    type: action.GET_PROGRAM_REQ,
+});
+
+export const getProgramSuccess = (result: any) => ({
+    type: action.GET_PROGRAM_SUCCESS,
+    payload: result,
+})
+
+export const getProgramFail = (error: any) => ({
+    type: action.GET_PROGRAM_FAIL,
+    payload: error,
+})
+
 // Get Batch
 export const getBatchReq = (payload: any) => ({
     type: action.GET_BATCH_REQ,
@@ -49,5 +64,21 @@ export const bulkDeleteBatchSuccess = (result: any) => ({
 
 export const bulkDeleteBatchFail = (error: any) => ({
     type: action.BULK_DELETE_BATCH_FAIL,
+    payload: error,
+})
+
+// Bulk Create Batch
+export const createBatchReq = (payload: any) => ({
+    type: action.CREATE_BATCH_REQ,
+    payload,
+});
+
+export const createBatchSuccess = (result: any) => ({
+    type: action.CREATE_BATCH_SUCCESS,
+    payload: result,
+})
+
+export const createBatchFail = (error: any) => ({
+    type: action.CREATE_BATCH_FAIL,
     payload: error,
 })

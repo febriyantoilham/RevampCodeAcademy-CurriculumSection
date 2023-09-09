@@ -3,6 +3,8 @@ import * as actionType from "../../constant/bootcamp/batchConstant";
 const INIT_STATE = {
     currentBatch: null,
     statusList: null,
+    programList: null,
+    response: null,
 }
 
 const batchReducer = (state = INIT_STATE, action: any) => {
@@ -16,6 +18,16 @@ const batchReducer = (state = INIT_STATE, action: any) => {
             return {
                 ...state,
                 statusList: null,
+            }
+        case actionType.GET_PROGRAM_SUCCESS:
+            return {
+                ...state,
+                programList: action.payload,
+            }
+        case actionType.GET_PROGRAM_FAIL:
+            return {
+                ...state,
+                programList: null,
             }
         case actionType.GET_BATCH_SUCCESS:
             return {
@@ -35,6 +47,16 @@ const batchReducer = (state = INIT_STATE, action: any) => {
         case actionType.BULK_DELETE_BATCH_FAIL:
             return {
                 ...state,
+            }
+        case actionType.CREATE_BATCH_SUCCESS:
+            return {
+                ...state,
+                response: action.payload,
+            }
+        case actionType.CREATE_BATCH_FAIL:
+            return {
+                ...state,
+                response: null,
             }
         case 'RESET_BATCH':
             return INIT_STATE;
