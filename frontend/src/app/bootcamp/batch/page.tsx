@@ -8,6 +8,7 @@ import Image from "next/image";
 import config from "@/config/config";
 import Link from "next/link";
 import CustomAlert from "@/app/ui/alert";
+import ClosedAlert from "./closedAlert";
 
 export default function Batch() {
     const dispatch = useDispatch()
@@ -27,6 +28,10 @@ export default function Batch() {
 
     const [selectedItem, setSelectedItem] = useState<any[]>([]);
     const [selectAll, setSelectedAll] = useState(false);
+
+    // const close batch alert
+    const [statusInput, setStatusInput] = useState('');
+    const [closedAlertPayload, setClosedAlertPayload] = useState(null);
     
     useEffect(() => {
         if (!hasCookie('access_token')) {
@@ -62,9 +67,9 @@ export default function Batch() {
 
     const handleSelectAll = () => {
         if (selectAll){
-        setSelectedItem([]);
+            setSelectedItem([]);
         } else {
-        const allItems = batch.data.map((batch:any) => batch.batchId);
+            const allItems = batch.data.map((batch:any) => batch.batchId);
         setSelectedItem(allItems);
         }
         setSelectedAll(!selectAll);
@@ -83,6 +88,7 @@ export default function Batch() {
 
     return (
         <div className='bg-base-100 rounded-xl shadow-xl max-md:p-5 p-8 h-full flex flex-col gap-y-10'>
+            {closedAlertPayload && statusInput && <ClosedAlert batch={closedAlertPayload} setRefresh={setRefresh} setBatch={setClosedAlertPayload} statusInput={statusInput}/>}
             {alertInfo.showAlert && <CustomAlert alertInfo={alertInfo} setAlert={setAlertInfo} refresh={refresh} setRefresh={setRefresh}/>}
             <div className="flex justify-between">
                 <div className='text-xl font-bold'>Batch</div>
@@ -159,12 +165,11 @@ export default function Batch() {
                                 </td>
                                 <td className="capitalize">
                                     <div><span className="font-medium">Start : </span>{new Date(item.batchStartDate).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
-                                    <div><span className="font-medium">End : </span>{new Date(item.batchStartDate).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
+                                    <div><span className="font-medium">End : </span>{new Date(item.batchEndDate).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
                                 </td>
                                 <td className="capitalize">{item.batchEntity.progCreatedBy.empEntity.userFirstName} {item.batchEntity.progCreatedBy.empEntity.userLastName}</td>
-                                {/* <td className="capitalize">{item.batchStatus}</td> */}
                                 <td>
-                                    <div className={`badge ${item.batchStatus === "Open" ? "badge-accent bg-accent badge-outline bg-opacity-10" : item.batchStatus === "Closed" ? "badge-neutral bg-neutral badge-outline bg-opacity-10" : ""} capitalize`}>{item.batchStatus}</div>
+                                    <div className={`badge ${item.batchStatus === "Open" ? "badge-accent bg-accent badge-outline bg-opacity-10" : item.batchStatus === "Close" ? "bg-neutral badge-outline bg-opacity-10" : item.batchStatus === "Running" ? "badge-primary bg-primary badge-outline bg-opacity-10" : ""} capitalize`}>{item.batchStatus}</div>
                                 </td>
                                 <td>
                                     <div className="dropdown dropdown-left dropdown-hover">
@@ -172,9 +177,13 @@ export default function Batch() {
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" /></svg>
                                         </label>
                                         <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-                                            <li><a>Edit</a></li>
-                                            <li><a>Close Batch</a></li>
-                                            <li><a>Set to Running</a></li>
+                                            <li>
+                                                <Link href={`/bootcamp/batch/${item.batchId}`}>Edit</Link>
+                                            </li>
+                                            <li><a onClick={() => {setClosedAlertPayload(item); setStatusInput("close")}}>{item.batchStatus === "Close" ? 'Open Batch' : 'Close Batch'}</a></li>
+                                            {item.batchStatus !== "Close" &&
+                                                <li><a onClick={() => {setClosedAlertPayload(item); setStatusInput("run")}}>Set to Running</a></li>
+                                            }
                                             <li><a>Evaluation</a></li>
                                         </ul>
                                     </div>

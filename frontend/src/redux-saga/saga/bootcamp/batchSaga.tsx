@@ -1,4 +1,4 @@
-import { bulkDeleteBatchFail, bulkDeleteBatchSuccess, createBatchFail, createBatchSuccess, getBatchFail, getBatchSuccess, getCandidateFail, getCandidateSuccess, getInstructorsFail, getInstructorsSuccess, getProgramFail, getProgramSuccess, getStatusFail, getStatusSuccess } from "@/redux-saga/action/bootcamp/batchAction";
+import { bulkDeleteBatchFail, bulkDeleteBatchSuccess, closeBatchFail, closeBatchSuccess, createBatchFail, createBatchSuccess, editBatchFail, editBatchSuccess, getBatchByIdFail, getBatchByIdSuccess, getBatchFail, getBatchSuccess, getCandidateFail, getCandidateSuccess, getInstructorsFail, getInstructorsSuccess, getProgramFail, getProgramSuccess, getStatusFail, getStatusSuccess, setRunningFail, setRunningSuccess } from "@/redux-saga/action/bootcamp/batchAction";
 import { call, put } from "redux-saga/effects";
 import batch from '@/api/bootcamp/batch'
 import instructorPrograms from "@/api/bootcamp/instructorPrograms";
@@ -49,6 +49,16 @@ export function* getBatch(action: any): any {
     }
 }
 
+export function* getBatchById(action: any): any {
+    const { payload } = action;
+    try {
+        const result = yield call(batch.getBatchById, payload);
+        yield put(getBatchByIdSuccess(result.data));
+    } catch (error) {
+        yield put(getBatchByIdFail(error));
+    }
+}
+
 export function* bulkDelete(action: any): any {
     const { payload } = action;
     try {
@@ -66,5 +76,35 @@ export function* createBatch(action: any): any {
         yield put(createBatchSuccess(result));
     } catch (error) {
         yield put(createBatchFail(error));
+    }
+}
+
+export function* editBatch(action: any): any {
+    const { payload } = action;
+    try {
+        const result = yield call(batch.editBatch, payload);
+        yield put(editBatchSuccess(result));
+    } catch (error) {
+        yield put(editBatchFail(error));
+    }
+}
+
+export function* closeBatch(action: any): any {
+    const { payload } = action;
+    try {
+        const result = yield call(batch.closeBatch, payload);
+        yield put(closeBatchSuccess(result));
+    } catch (error) {
+        yield put(closeBatchFail(error));
+    }
+}
+
+export function* setRunning(action: any): any {
+    const { payload } = action;
+    try {
+        const result = yield call(batch.setRunning, payload);
+        yield put(setRunningSuccess(result));
+    } catch (error) {
+        yield put(setRunningFail(error));
     }
 }

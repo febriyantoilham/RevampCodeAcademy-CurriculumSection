@@ -3,7 +3,7 @@ import Select from 'react-select';
 export default function CustomSelect(props: any) {
   return (
     <div className="">
-        <Select id={props.id} options={props.options} className="capitalize" 
+        <Select isDisabled={props.isDisabled || false} id={props.id} options={props.options} className="capitalize" 
             styles={{control: (baseStyles) => ({
             ...baseStyles, 
             height: '3rem', 

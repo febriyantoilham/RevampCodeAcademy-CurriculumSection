@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Batch } from 'output/entities/Batch';
 import { Employee } from 'output/entities/Employee';
 import { ProgramEntity } from 'output/entities/ProgramEntity';
-import { Like, Repository } from 'typeorm';
+import { ILike, In, Repository } from 'typeorm';
 
 import * as fs from 'fs';
 import * as path from 'path';
@@ -94,7 +94,7 @@ export class BatchService {
 
   public async getCandidate() {
     const program = await this.serviceUsers.find({
-      where: { userCurrentRole: 1 },
+      where: { userCurrentRole: In([1, 9]) },
       relations: { usersEducations: true },
       select: {
         userEntityId: true,
@@ -102,6 +102,7 @@ export class BatchService {
         userLastName: true,
         userModifiedDate: true,
         userPhoto: true,
+        userCurrentRole: true,
       },
       order: { userEntityId: 'ASC' },
     });
@@ -118,7 +119,7 @@ export class BatchService {
     try {
       if (options.searchValue || options.status) {
         const checkSearchValue = await this.serviceBatch.find({
-          where: { batchName: Like(`%${options.searchValue}%`) },
+          where: { batchName: ILike(`%${options.searchValue}%`) },
         });
 
         if (checkSearchValue.length === 0) {
@@ -150,17 +151,20 @@ export class BatchService {
                 },
               },
             },
-            batchTrainees: true,
+            batchTrainees: {
+              batrId: true,
+              batrTraineeEntity: { userEntityId: true, userPhoto: true },
+            },
           },
           take: options.limit,
           skip: skippedItems,
           where: [
             {
-              batchName: Like(`%${name}%`),
+              batchName: ILike(`%${name}%`),
               batchEntity: {
-                progTitle: Like(`%${tech}%`),
+                progTitle: ILike(`%${tech}%`),
               },
-              batchStatus: Like(`%${options.status}%`),
+              batchStatus: ILike(`%${options.status}%`),
             },
           ],
           order: {
@@ -282,9 +286,12 @@ export class BatchService {
               empEntity: {
                 userFirstName: true,
                 userLastName: true,
-                userPhoto: true,
               },
             },
+          },
+          batchTrainees: {
+            batrId: true,
+            batrTraineeEntity: { userEntityId: true, userPhoto: true },
           },
         },
       });
@@ -358,9 +365,7 @@ export class BatchService {
         },
       ];
 
-      const resultInstructor = await this.serviceInstructorPrograms.save(
-        instructorsData,
-      );
+      await this.serviceInstructorPrograms.save(instructorsData);
 
       for (const trainee of batchTraineeData) {
         await this.serviceBatchTrainee.save({
@@ -390,7 +395,9 @@ export class BatchService {
   }
 
   public async edit(options: BootcampOptions, fields: any) {
+    // Assign fields for update Batch data
     const batchData = {
+      batchEntityId: fields.batchEntityId,
       batchName: fields.batchName,
       batchDescription: null,
       batchStartDate: fields.batchStartDate,
@@ -398,40 +405,176 @@ export class BatchService {
       batchReason: null,
       batchType: fields.batchType, // From program.progLearningType
       batchModifiedDate: new Date(),
-      batchStatus: fields.batchStatus,
       batchPicId: fields.batchPicId, // From user.userEntityId
     };
 
-    const batchTraineeData = {};
-    const instructorsData = {};
+    // Assign fields for update Batch Trainee data
+    const batrTraineeEntityIds = fields.batchTraineeData;
 
     try {
+      // Check if pic is filled or not
       if (!fields.batchPicId) {
         return { success: false, error: 'Please insert batch PIC id' };
       }
 
-      // Get Curriculum Program Data
-      const checkBatch = await this.serviceBatch.findOne({
-        where: { batchId: options.id, batchEntityId: options.progEntityId },
+      // Get new program data
+      const program = await this.serviceProgramEntity.findOne({
+        where: { progEntityId: batchData.batchEntityId },
       });
 
-      if (!checkBatch) {
-        console.log(`Batch not found!`);
-        return { success: false, error: 'Batch not found!' };
+      // Check new program exist or not
+      if (!program) {
+        console.log(`Program with id: ${batchData.batchEntityId} not found!`);
+        return { success: false, error: 'Program not found!' };
       }
 
-      // Save Batch
+      // Get All Trainee data in batch
+      const checkTrainee = await this.serviceBatchTrainee.find({
+        where: { batrBatchId: options.id },
+      });
+
+      // Check the Trainee is still on the batch or not (using usersEntityId)
+      for (const trainee of checkTrainee) {
+        // if the trainee no longer exist
+        if (!batrTraineeEntityIds.includes(trainee.batrTraineeEntityId)) {
+          // Delete Batch Trainee Data
+          await this.serviceBatchTrainee.delete({
+            batrBatchId: trainee.batrBatchId,
+            batrTraineeEntityId: trainee.batrTraineeEntityId,
+          });
+          // Delete User Roles with roles student
+          await this.serviceUsersRoles.delete({
+            usroEntityId: trainee.batrTraineeEntityId,
+            usroRoleId: 9,
+          });
+          // Update User Current Role to candidate
+          await this.serviceUsers.update(trainee.batrTraineeEntityId, {
+            userCurrentRole: 1,
+          });
+        }
+      }
+
+      // Adding new trainee
+      for (const entityId of batrTraineeEntityIds) {
+        // Get Trainee data in batch with usersEntityId and batchId
+        const checkId = await this.serviceBatchTrainee.findOne({
+          where: {
+            batrTraineeEntityId: entityId,
+            batrBatchId: options.id,
+          },
+        });
+
+        // If the trainee not on the table, add new
+        if (!checkId) {
+          // Save new trainee
+          await this.serviceBatchTrainee.save({
+            batrTraineeEntityId: entityId,
+            batrBatchId: options.id,
+          });
+
+          // Get the usersRoles with roles 9(student)
+          const checkRoles = await this.serviceUsersRoles.findOne({
+            where: { usroEntityId: entityId, usroRoleId: 9 },
+          });
+
+          // Save new userRoles with role student if it not exist
+          if (!checkRoles) {
+            await this.serviceUsersRoles.save({
+              usroEntityId: entityId,
+              usroRoleId: 9,
+            });
+          }
+
+          // Update userCurrentRole in users data to 9(student)
+          await this.serviceUsers.update(entityId, {
+            userCurrentRole: 9,
+          });
+        }
+      }
+
+      // Update Batch
       await this.serviceBatch.update(
         { batchId: options.id, batchEntityId: options.progEntityId },
         { ...batchData },
       );
 
       // Get New Batch Data
-      const newBatch = await this.serviceBatch.findOne({
-        where: { batchId: options.id, batchEntityId: options.progEntityId },
+      const newBatch = this.getByBatchId(options.id);
+
+      console.log(`Result Program: ${JSON.stringify(newBatch)}`);
+      return newBatch;
+    } catch (error) {
+      // Reset Batch Id if not used because some error
+      await this.resetBatchId();
+      console.log(error.message);
+      return { success: false, error: error.message };
+    }
+  }
+
+  public async setClosed(options: BootcampOptions) {
+    try {
+      const check = await this.serviceBatch.findOne({
+        where: {
+          batchId: options.id,
+          batchEntityId: options.progEntityId,
+        },
       });
 
-      console.log(`Update Result: ${JSON.stringify(newBatch)}`);
+      if (!check) {
+        return { error: `Batch not found!` };
+      }
+
+      if (check.batchStatus !== 'Close') {
+        // Update Batch to Close
+        await this.serviceBatch.update(
+          { batchId: options.id, batchEntityId: options.progEntityId },
+          { batchStatus: 'Close' },
+        );
+      } else {
+        // Update Batch to Open
+        await this.serviceBatch.update(
+          { batchId: options.id, batchEntityId: options.progEntityId },
+          { batchStatus: 'Open' },
+        );
+      }
+      // Get New Batch Data
+      const newBatch = this.getByBatchId(options.id);
+
+      console.log(`Result Program: ${JSON.stringify(newBatch)}`);
+      return newBatch;
+    } catch (error) {
+      // Reset Batch Id if not used because some error
+      await this.resetBatchId();
+      console.log(error.message);
+      return { success: false, error: error.message };
+    }
+  }
+
+  public async setRunning(options: BootcampOptions) {
+    try {
+      const check = await this.serviceBatch.findOne({
+        where: {
+          batchId: options.id,
+          batchEntityId: options.progEntityId,
+        },
+      });
+
+      if (!check) {
+        return { error: `Batch not found!` };
+      }
+
+      // Check the status is not close
+      if (check.batchStatus !== 'Close') {
+        // Update Batch to Running
+        await this.serviceBatch.update(
+          { batchId: options.id, batchEntityId: options.progEntityId },
+          { batchStatus: 'Running' },
+        );
+      }
+      // Get New Batch Data
+      const newBatch = this.getByBatchId(options.id);
+
+      console.log(`Result Program: ${JSON.stringify(newBatch)}`);
       return newBatch;
     } catch (error) {
       // Reset Batch Id if not used because some error

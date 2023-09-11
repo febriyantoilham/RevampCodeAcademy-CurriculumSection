@@ -28,7 +28,7 @@ import { getCity } from "./master/citySaga";
 import { handleCreateUserEducations, handleDeleteUserEducations, handleEditUserEducations } from "./users/userEducationsSaga";
 import { handleCreateUserExperiences, handleDeleteUserExperiences, handleEditUserExperiences } from "./users/userExperiencesSaga";
 import { handleGetJobType } from "./master/addressTypeSaga copy";
-import { bulkDelete, createBatch, getBatch, getCandidate, getInstructor, getProgram, getStatus } from "./bootcamp/batchSaga";
+import { bulkDelete, closeBatch, createBatch, editBatch, getBatch, getBatchById, getCandidate, getInstructor, getProgram, getStatus, setRunning } from "./bootcamp/batchSaga";
 
 
 function* watchAll(){
@@ -92,11 +92,15 @@ function* watchAll(){
         takeEvery(ActionJobType.GET_JOB_TYPE_REQUEST, handleGetJobType),
         // Batch
         takeEvery(batch.GET_BATCH_REQ, getBatch),
+        takeEvery(batch.GET_BATCH_BY_ID_REQ, getBatchById),
         takeEvery(batch.GET_STATUS_REQ, getStatus),
         takeEvery(batch.GET_INSTRUCTOR_REQ, getInstructor),
         takeEvery(batch.GET_PROGRAM_REQ, getProgram),
         takeEvery(batch.BULK_DELETE_BATCH_REQ, bulkDelete),
         takeEvery(batch.CREATE_BATCH_REQ, createBatch),
+        takeEvery(batch.EDIT_BATCH_REQ, editBatch),
+        takeEvery(batch.CLOSE_BATCH_REQ, closeBatch),
+        takeEvery(batch.RUNNING_BATCH_REQ, setRunning),
         takeEvery(batch.GET_CANDIDATE_REQ, getCandidate),
     ])
 }

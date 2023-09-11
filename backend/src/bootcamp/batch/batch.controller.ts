@@ -61,6 +61,16 @@ export class BatchController {
     return this.service.edit(options, fields);
   }
 
+  @Put('close_batch')
+  public async setClosed(@Query() options: BootcampDto) {
+    return this.service.setClosed(options);
+  }
+
+  @Put('set_running')
+  public async setRunning(@Query() options: BootcampDto) {
+    return this.service.setRunning(options);
+  }
+
   @Delete('delete')
   public async delete(@Query() options: BootcampDto) {
     return this.service.delete(options);

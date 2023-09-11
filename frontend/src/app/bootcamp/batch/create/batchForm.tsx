@@ -35,7 +35,7 @@ export default function BatchForm(props: any) {
   // instructorList
   const instructors = props.instructors
   // candidate
-  const candidate = props.candidate;
+  const candidate = props.candidate.filter((user: any) => user.userCurrentRole === 1);
   const [selectCandidate, setSelectCandidate] = useState<any[]>([]);
   const [selectCandidateAll, setSelectCandidateAll] = useState(false);
   const handleSelectedItem = (userEntityId: any) => {
