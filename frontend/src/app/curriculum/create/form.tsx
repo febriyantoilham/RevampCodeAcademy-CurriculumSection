@@ -3,7 +3,7 @@ import CustomAlert from "@/app/ui/alert";
 import { useFormik } from "formik";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
-import { AddCurriculumReq, DeleteCurriculumReq, EditCurriculumReq, ResetCurriculumState } from "@/redux-saga/action/curriculumAction";
+import { CreateProgramReq, DeleteProgramReq, EditProgramReq, ResetProgram } from "@/redux-saga/action/curriculum/programEntityAction";
 import { useRouter } from "next/navigation";
 
 // View
@@ -14,6 +14,7 @@ import CreateSectionPage from "./section/createSectionPage";
 import EditSectionPage from "./section/editSectionPage";
 import CreateSectionDetailPage from "./section/sectionDetail/createSectionDetailPage";
 import ViewSecDet from "./section/sectionDetail/viewSectionDetailModal";
+import { GetAllSectionRequest } from "@/redux-saga/action/curriculum/sectionAction";
 
 export default function Form(props: any) {
     const dispatch = useDispatch();
@@ -29,27 +30,50 @@ export default function Form(props: any) {
     const [imageExists, setImageExists] = useState(true);
     const [previewImg, setPreviewImg] = useState<any>();
     const [upload, setUpload] = useState(false);
+    const sectionList = useSelector((state: any) => state.sectionState.sectionList); // sectionList State (sectionReducer)
 
     useEffect(() => {
         setRefresh(false);
     }, [refresh])
 
+    const {
+        progHeadline,
+        progTitle,
+        progType,
+        progLearningType,
+        progDuration,
+        progDurationType,
+        progCateId,
+        progLanguage,
+        progPrice,
+        progTagSkill,
+        progCreatedById = -1,
+        programEntityDescription = {},
+    } = program || {};
+
+    const {
+        predItemLearning: { items: predItemLearning = [] } = {},
+        predDescription: { items: predDescription = [] } = {},
+    } = programEntityDescription || {};
+
+
     const loadValue = {
-        progHeadline: program?.progHeadline,
-        progTitle: program?.progTitle,
-        progType: program?.progType,
-        progLearningType: program?.progLearningType,
-        progDuration: program?.progDuration,
-        progDurationType: program?.progDurationType,
-        progCateId: program?.progCateId,
-        progLanguage: program?.progLanguage,
-        progPrice: program?.progPrice,
-        progTagSkill: program?.progTagSkill,
-        progCreatedById: program?.progCreatedById || -1,
-        predItemLearning: program?.programEntityDescription?.predItemLearning.items,
-        predDescription: program?.programEntityDescription?.predDescription.items,
+        progHeadline,
+        progTitle,
+        progType,
+        progLearningType,
+        progDuration,
+        progDurationType,
+        progCateId,
+        progLanguage,
+        progPrice,
+        progTagSkill,
+        progCreatedById,
+        predItemLearning,
+        predDescription,
         file: '',
-    }
+    };
+
 
     const formik = useFormik({
         initialValues: loadValue,
@@ -73,25 +97,26 @@ export default function Form(props: any) {
             payload.append("predItemLearning", values.predItemLearning);
             payload.append("predDescription", values.predDescription);
 
-            console.log(`Values: ${JSON.stringify(values)}`);
-            
-
-            if (program.length === 0) {
-                dispatch(AddCurriculumReq(payload));
-                // props.setRefresh(true);
-                props.alert({ showAlert: true, alertText: 'waiting...', alertType: 'success'});
-                props.setId(progEntityId);
+            if (props.onEdit === false) {
+                console.log(`Create`);
+                dispatch(CreateProgramReq(payload));
+                props.setOnEdit(false);
+                props.setOnEdit(true);
+                props.setRefresh(false);
+                props.setRefresh(true);
             } else {
-                dispatch(EditCurriculumReq(
-                {
-                    id: progEntityId,
-                    data: payload
-                }
+                console.log(`Update`);
+                dispatch(EditProgramReq(
+                    {
+                        id: progEntityId,
+                        data: payload
+                    }
                 ));
+                props.setOnEdit(false);
                 router.push('/curriculum');
             }
-            // formik.setValues(loadValue);
-            // setRefresh(true);
+            formik.setValues(loadValue);
+            setRefresh(true);
         }
     });
 
@@ -122,9 +147,9 @@ export default function Form(props: any) {
     }))
 
     const onDelete = () => {
-        if (program.length !== 0) {
+        if (props.onEdit === true) {
             console.log('Delete');
-            dispatch(DeleteCurriculumReq(progEntityId));
+            dispatch(DeleteProgramReq(progEntityId));
             router.push('/curriculum');
         } else {
             console.log('Cancel Aja');
@@ -141,7 +166,7 @@ export default function Form(props: any) {
                         <>
                             <div className="avatar mb-3">
                                 <div className="w-24 m-auto">
-                                    <Image src="/photo-def.png" alt={""} layout="fill" objectFit="contain"/>
+                                    <Image src="/photo-def.png" alt={""} width={500} height={500}/>
                                 </div>
                             </div>
                         </>
@@ -242,23 +267,23 @@ export default function Form(props: any) {
                                 <div className="avatar">
                                     <div className="w-24 mask mask-circle m-auto">
                                         {
-                                        formik.values.progCreatedById < 0 ? (<Image src="/userDefault.png" alt={"photo-pic"} layout="fill" objectFit="contain"/>
-                                        ) : ( instructor.map((emp: any, index: any) => (
-                                            <div key={index}>
-                                            {emp.userEntityId == formik.values.progCreatedById ? (
-                                                imageExists ? (
-                                                <Image src={`${config.domain}/program_entity/getImg/${emp.userPhoto}`} alt={"dss"} layout="fill" objectFit="contain" onError={handleImageError}/>
-                                                ) : ( 
-                                                <div className="avatar placeholder">
-                                                    <div className="bg-neutral-focus text-neutral-content rounded-full w-24 flex flex-col">
-                                                    <span className="text-sm">Image</span>
-                                                    <span className="text-sm">Not Found</span>
-                                                    </div>
-                                                </div> 
-                                                )
-                                            ) : (<></>)}
-                                            </div>
-                                        )))
+                                            formik.values.progCreatedById < 0 ? (<Image src="/userDefault.png" alt={"photo-pic"} width={1000} height={1000}/>
+                                            ) : ( instructor.map((emp: any, index: any) => (
+                                                <div key={index}>
+                                                {emp.userEntityId == formik.values.progCreatedById ? (
+                                                    imageExists ? (
+                                                    <Image src={`${config.domain}/program_entity/getImg/${emp.userPhoto}`} alt={"dss"} width={1000} height={1000} onError={handleImageError}/>
+                                                    ) : ( 
+                                                    <div className="avatar placeholder">
+                                                        <div className="bg-neutral-focus text-neutral-content rounded-full w-24 flex flex-col">
+                                                        <span className="text-sm">Image</span>
+                                                        <span className="text-sm">Not Found</span>
+                                                        </div>
+                                                    </div> 
+                                                    )
+                                                ) : (<></>)}
+                                                </div>
+                                            )))
                                         }
                                     </div>
                                 </div>
@@ -281,19 +306,18 @@ export default function Form(props: any) {
                         <hr className="mt-3 mb-6"/>
                         <div className="flex justify-between items-center">
                             <p className="p-0 m-0 font-medium text-base uppercase">Materi (Section & Sub Section)</p>
-                            <CreateSectionPage program={program} setRefresh={props.setRefresh} alert={props.alert}/>
+                            <CreateSectionPage progEntityId={progEntityId} onEdit={props.onEdit} setRefresh={props.setRefresh}/>
                         </div>
-                        { program.length !== 0 && 
+                        { program && 
                             <div className="mt-3">
-                                { program.sections.length !== 0 ? (
-                                    program.sections.map((section: any, index: any)=>(
-                                    <>
+                                { program.sections.length !== 0 && sectionList ? (
+                                    sectionList.map((section: any, index: any)=>(
                                         <div key={index} className="card card-compact w-full bg-base-200 mb-5">
                                             <div className="card-body">
                                                 <div className="flex justify-between">
                                                     <div className="text-xl font-medium">{section.sectTitle}</div>
                                                     <div className="flex">
-                                                        <EditSectionPage section={section} program={program} setRefresh={props.setRefresh} alert={props.alert}/>
+                                                        <EditSectionPage section={section} progEntityId={progEntityId} onEdit={props.onEdit} setRefresh={props.setRefresh}/>
                                                     </div>
                                                 </div>
                                                 <div className="border border-gray-300 my-2"></div>
@@ -302,26 +326,25 @@ export default function Form(props: any) {
                                                     section.sectionDetails.length !== 0 && section.sectionDetails?.map((item: any, index: any) => {
                                                         return (
                                                             <div key={index}>
-                                                                <ViewSecDet sectionDetail={item} setRefresh={props.setRefresh} alert={props.alert}/>
+                                                                <ViewSecDet sectionDetail={item} setRefresh={props.setRefresh}/>
                                                             </div>
                                                         )
                                                     })
                                                     ):(
                                                         <div className="flex flex-col gap-3 items-center">
                                                             <div className="">The Section Material are empty, create new!</div>
-                                                            <CreateSectionDetailPage program={program} section={section} setRefresh={props.setRefresh} alert={props.alert}/>
+                                                            <CreateSectionDetailPage progEntityId={progEntityId} sectId={section.sectId} setRefresh={props.setRefresh}/>
                                                         </div>
                                                     )
                                                     }
                                                 </div>
                                                 {section.sectionDetails?.length !== 0 ? (
                                                     <div className="flex gap-3 items-center justify-end">
-                                                        <CreateSectionDetailPage program={program} section={section} setRefresh={props.setRefresh} alert={props.alert}/>
+                                                        <CreateSectionDetailPage progEntityId={progEntityId} sectId={section.sectId} setRefresh={props.setRefresh}/>
                                                     </div>
                                                 ):(<></>)}
                                             </div>
                                         </div>
-                                    </>
                                     ))) : (
                                     <div className="flex justify-between items-center">
                                     <div className="">The sections are not added yet, click edit program to add new section!</div>
@@ -333,7 +356,7 @@ export default function Form(props: any) {
                     </div>
                     <div id="button" className="flex justify-end gap-3">
                         <button type="button" className="btn btn-primary my-3" onClick={() => formik.handleSubmit()}>
-                            Submit
+                            {props.onEdit ? 'Submit' : 'Continue'}
                         </button>
                         <button type="button" onClick={onDelete} className="btn btn-neutral my-auto">
                             Cancel

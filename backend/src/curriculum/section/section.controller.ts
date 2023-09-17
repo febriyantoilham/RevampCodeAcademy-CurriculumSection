@@ -9,21 +9,21 @@ import {
 } from '@nestjs/common';
 import { SectionService } from './section.services';
 
-@Controller('curriculum/section')
+@Controller('program_entity/section')
 export class SectionController {
   constructor(private Service: SectionService) {}
 
-  @Post('create/:sectProgEntityId')
+  @Post('create/:progEntityId')
   public async Create(
-    @Param('sectProgEntityId') sectProgEntityId: number,
+    @Param('progEntityId') progEntityId: number,
     @Body() fields: any,
   ) {
-    return this.Service.create(sectProgEntityId, fields);
+    return this.Service.create(progEntityId, fields);
   }
 
-  @Get('get/:sectProgEntityId')
-  public async getAll(@Param('sectProgEntityId') sectProgEntityId: number) {
-    return this.Service.findAll(sectProgEntityId);
+  @Get('get/:progEntityId')
+  public async getAll(@Param('progEntityId') progEntityId: number) {
+    return this.Service.findAll(progEntityId);
   }
 
   @Get('get/one/:sectId')

@@ -75,7 +75,7 @@ const editBatch = async (payload: any) => {
     const {progEntityId, id, data} = payload;
     try {
         const result = await axios.put(`${config.domain}/bootcamp/batch/edit?progEntityId=${progEntityId}&id=${id}`, data)
-        return result
+        return result.data;
     } catch (error) {
         return error;
     }

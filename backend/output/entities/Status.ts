@@ -28,6 +28,13 @@ export class Status {
   })
   statusModifiedDate: Date | null;
 
+  @Column('character varying', {
+    name: 'status_module',
+    length: 125,
+    nullable: false,
+  })
+  moduleName: string;
+
   @OneToMany(() => Batch, (batch) => batch.batchStatus)
   batches: Batch[];
 

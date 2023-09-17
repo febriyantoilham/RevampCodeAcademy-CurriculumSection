@@ -10,18 +10,14 @@ export default function CustomAlert(props: any) {
         setTimeout(() => {
             setModal(false);
             props.setAlert({ showAlert: false });
-            if (refresh) {
-                props.setRefresh(false);
-                props.setRefresh(true);
-            } else {
-                props.setRefresh(true);
-            }
-        }, 1500);
+            props.setRefresh(false);
+            props.setRefresh(true);
+        }, 2000);
     }
 
     function handleChange() {
         setModal(!modal);
-        props.setAlert({ showAlert: false });
+        // props.setAlert({ showAlert: false });
     }
 
     return (

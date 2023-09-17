@@ -11,14 +11,14 @@ export default function Sidebar(props: any) {
   const dispatch = useDispatch();
   const pathname = usePathname();
   const id = getCookie('userEntityId');
-  const excludeRoutes = ['/', '/signin', '/signup', '/employee', '/signup/confirm', '/employee/confirm', `/profile/${id}`];
+  const excludeRoutes = ['/', '/signin', '/signup', '/employee', '/signup/confirm', '/employee/confirm', `/profile/${id}`, '/programs'];
   const show = !excludeRoutes.includes(pathname);
   const user = useSelector((state: any) => state.usersState.currentUser);
 
-  useEffect(() => {
-        dispatch(getUserByIdRequest(id));
-        setRefresh(false);
-    }, [dispatch, id, refresh])
+  // useEffect(() => {
+  //       dispatch(getUserByIdRequest(id));
+  //       setRefresh(false);
+  //   }, [dispatch, id, refresh])
 
   return (
     (id && user && show && 

@@ -108,6 +108,7 @@ export default function Batch() {
                             <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
                                 <li onClick={() => {setStatus(''); setRefresh(true)}}><a>Semua</a></li>
                                 {statusList.map((item: any, index:any) => (
+                                    (item.status === "Open" || item.status === "Running" || item.status === "Close") &&
                                     <li key={index} onClick={() => {setStatus(item.status); setRefresh(true)}}><a>{item.status}</a></li>
                                 ))}
                             </ul>

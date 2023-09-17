@@ -26,48 +26,77 @@ export class SectionDetailService {
 
   public async create(file: any, fields: any) {
     try {
-      // Insert ke Table Sections Detail
-      const section_item = await this.serviceSec.findOne({
+      const payload = {
+        sectProgEntityId: fields.sectProgEntityId,
+        sectId: fields.sectId,
+        secdTitle: fields.secdTitle,
+        secdMinute: fields.secdMinute,
+        sedmFiletype: fields.sedmFiletype,
+      };
+
+      // Check program
+      const programCheck = await this.serviceProgEntity.findOne({
+        where: { progEntityId: payload.sectProgEntityId },
+      });
+
+      if (!programCheck) {
+        return {
+          success: false,
+          error: `Program with ID ${payload.sectProgEntityId} not found!`,
+        };
+      }
+
+      // Check section
+      const sectionCheck = await this.serviceSec.findOne({
         where: {
-          sectId: fields.sectId,
-          sectProgEntityId: fields.sectProgEntityId,
+          sectId: payload.sectId,
+          sectProgEntityId: payload.sectProgEntityId,
         },
       });
 
-      if (section_item) {
-        const secd = await this.serviceSecDet.save({
-          secdSectid: section_item.sectId,
-          secdTitle: fields.secdTitle,
-          secdPreview: 1,
-          secdMinute: fields.secdMinute,
-        });
-
-        await this.serviceSecDetMat.save({
-          sedmSecdid: secd.secdId,
-          sedmFiletype: fields.sedmFiletype,
-          sedmFilename: file.originalname,
-        });
-      } else {
-        return { success: false, error: 'Record not found' };
+      if (!sectionCheck) {
+        return {
+          success: false,
+          error: `Section with ID ${payload.sectId} not found!`,
+        };
       }
+
+      // Insert ke Table Sections Details
+      const secd = await this.serviceSecDet.save({
+        secdSectid: payload.sectId,
+        secdTitle: payload.secdTitle,
+        secdPreview: 1,
+        secdMinute: payload.secdMinute,
+      });
+
+      await this.serviceSecDetMat.save({
+        sedmSecdid: secd.secdId,
+        sedmFiletype: payload.sedmFiletype,
+        sedmFilename: file.originalname,
+      });
 
       const result = await this.serviceSec.findOne({
         where: {
-          sectId: section_item.sectId,
-          sectProgEntityId: section_item.sectProgEntityId,
+          sectId: payload.sectId,
+          sectProgEntityId: payload.sectProgEntityId,
         },
         relations: ['sectionDetails', 'sectionDetails.sectionDetailMaterials'],
       });
       return result;
     } catch (error) {
-      return error.message;
+      // Handle errors and return a detailed error message
+      console.error(`Error creating section: ${error.message}`);
+      return {
+        success: false,
+        error: `Error creating section: ${error.message}`,
+      };
     }
   }
 
-  public async findAll(secdSectid: number) {
+  public async findAll(sectId: number) {
     try {
-      const subsection = await this.serviceSecDet.findOne({
-        where: { secdSectid: secdSectid },
+      const subsection = await this.serviceSecDet.find({
+        where: { secdSectid: sectId },
         relations: ['sectionDetailMaterials'],
       });
 

@@ -1,7 +1,7 @@
 import { takeEvery, all, take } from "redux-saga/effects";
-import * as ActionCurriculum from '../constant/curriculumConstant';
-import * as ActionSection from '../constant/sectionConstant';
-import * as ActionSectionDetail from  '../constant/sectionDetailConstant';
+import * as ActionProgramEntity from '../constant/curriculum/programEntityConstant';
+import * as ActionSection from '../constant/curriculum/sectionConstant';
+import * as ActionSectionDetail from  '../constant/curriculum/sectionDetailConstant';
 import * as ActionAuth from  '../constant/users/authConstant';
 import * as ActionSignUp from  '../constant/users/signupConstant';
 import * as ActionUsers from  '../constant/users/usersConstant';
@@ -14,9 +14,6 @@ import * as ActionAddressType from  '../constant/master/addressTypeConstant';
 import * as ActionCity from  '../constant/master/cityConstant';
 import * as ActionJobType from  '../constant/master/jobTypeConstant';
 import * as batch from '../constant/bootcamp/batchConstant';
-import { handleCreateCurriculum, handleDeleteBundleCurriculum, handleDeleteCurriculum, handleEditCurriculum, handleGetCategoryAndEmployee, handleGetCurriculum, handleGetNewProgramId, handleGetOneCurriculum, handleSearchCurriculum } from "./curriculumSaga";
-import { handleAddSection, handleDeleteSection, handleGetSection, handleUpdateSection } from "./sectionSaga";
-import { handleAddSectionDetail, handleDeleteOneSectionDetail, handleGetAllSectionDetail, handleGetOneSectionDetail, handleUpdateSectionDetail } from "./sectionDetailSaga";
 import { handledSignIn } from "./users/authSaga";
 import { handledSignUp } from "./users/signupSaga";
 import { handleUpdatePassword, handleUpdateUserPhoto, handleUpdateUsers, handledGetUserById } from "./users/usersSaga";
@@ -29,33 +26,34 @@ import { handleCreateUserEducations, handleDeleteUserEducations, handleEditUserE
 import { handleCreateUserExperiences, handleDeleteUserExperiences, handleEditUserExperiences } from "./users/userExperiencesSaga";
 import { handleGetJobType } from "./master/addressTypeSaga copy";
 import { bulkDelete, closeBatch, createBatch, editBatch, getBatch, getBatchById, getCandidate, getInstructor, getProgram, getStatus, setRunning } from "./bootcamp/batchSaga";
+import { BulkDeletePrograms, CreateProgEntityId, CreateProgram, DeleteProgram, EditProgram, GetCateAndInstructor, GetProgramById, GetPrograms } from "./curriculum/programEntitySaga";
+import { CreateSection, DeleteSection, GetAllSections, GetSection, UpdateSection } from "./curriculum/sectionSaga";
+import { CreateSectionDetail, DeleteOneSectionDetail, GetAllSectionDetails, GetOneSectionDetail, UpdateSectionDetail } from "./curriculum/sectionDetailSaga";
 
 
 function* watchAll(){
     yield all([
-        // Curriculum
-        takeEvery(ActionCurriculum.GET_DATA_REQ, handleGetCurriculum),
-        takeEvery(ActionCurriculum.SEARCH_DATA_REQ, handleSearchCurriculum),
-        takeEvery(ActionCurriculum.DELETE_BUNDLE_DATA_REQ, handleDeleteBundleCurriculum),
-        // Category
-        takeEvery(ActionCurriculum.GET_CAT_REQ, handleGetCategoryAndEmployee),
         // Program Entity
-        takeEvery(ActionCurriculum.GET_NEW_ID_REQ, handleGetNewProgramId),
-        takeEvery(ActionCurriculum.GET_ONE_DATA_REQ, handleGetOneCurriculum),
-        takeEvery(ActionCurriculum.DELETE_DATA_REQ, handleDeleteCurriculum),
-        takeEvery(ActionCurriculum.ADD_DATA_REQ, handleCreateCurriculum),
-        takeEvery(ActionCurriculum.EDIT_DATA_REQ, handleEditCurriculum),
+        takeEvery(ActionProgramEntity.GET_CAT_REQ, GetCateAndInstructor),
+        takeEvery(ActionProgramEntity.GET_PROGRAMS_REQ, GetPrograms),
+        takeEvery(ActionProgramEntity.GET_ONE_DATA_REQ, GetProgramById),
+        takeEvery(ActionProgramEntity.GET_NEW_ID_REQ, CreateProgEntityId),
+        takeEvery(ActionProgramEntity.ADD_DATA_REQ, CreateProgram),
+        takeEvery(ActionProgramEntity.BULK_DELETE_REQ, BulkDeletePrograms),
+        takeEvery(ActionProgramEntity.DELETE_DATA_REQ, DeleteProgram),
+        takeEvery(ActionProgramEntity.EDIT_DATA_REQ, EditProgram),
         // Section
-        takeEvery(ActionSection.GET_SECTION_REQUEST, handleGetSection),
-        takeEvery(ActionSection.DELETE_SECTION_REQUEST, handleDeleteSection),
-        takeEvery(ActionSection.ADD_SECTION_REQUEST, handleAddSection),
-        takeEvery(ActionSection.UPDATE_SECTION_REQUEST, handleUpdateSection),
+        takeEvery(ActionSection.GET_ALL_SECTION_REQUEST, GetAllSections),
+        takeEvery(ActionSection.GET_SECTION_REQUEST, GetSection),
+        takeEvery(ActionSection.DELETE_SECTION_REQUEST, DeleteSection),
+        takeEvery(ActionSection.CREATE_SECTION_REQUEST, CreateSection),
+        takeEvery(ActionSection.UPDATE_SECTION_REQUEST, UpdateSection),
         // Section Detail
-        takeEvery(ActionSectionDetail.CREATE_SECTION_DETAIL_REQUEST, handleAddSectionDetail),
-        takeEvery(ActionSectionDetail.GET_ONE_SECTION_DETAIL_REQUEST, handleGetOneSectionDetail),
-        takeEvery(ActionSectionDetail.GET_ALL_SECTION_DETAIL_REQUEST, handleGetAllSectionDetail),
-        takeEvery(ActionSectionDetail.UPDATE_SECTION_DETAIL_REQUEST, handleUpdateSectionDetail),
-        takeEvery(ActionSectionDetail.DELETE_ONE_SECTION_DETAIL_REQUEST, handleDeleteOneSectionDetail),
+        takeEvery(ActionSectionDetail.CREATE_SECTION_DETAIL_REQUEST, CreateSectionDetail),
+        takeEvery(ActionSectionDetail.GET_ONE_SECTION_DETAIL_REQUEST, GetOneSectionDetail),
+        takeEvery(ActionSectionDetail.GET_ALL_SECTION_DETAIL_REQUEST, GetAllSectionDetails),
+        takeEvery(ActionSectionDetail.UPDATE_SECTION_DETAIL_REQUEST, UpdateSectionDetail),
+        takeEvery(ActionSectionDetail.DELETE_ONE_SECTION_DETAIL_REQUEST, DeleteOneSectionDetail),
         // Users
         takeEvery(ActionAuth.USER_SIGNIN_REQ, handledSignIn),
         takeEvery(ActionSignUp.USER_SIGNUP_REQ, handledSignUp),

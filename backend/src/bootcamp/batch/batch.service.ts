@@ -502,7 +502,7 @@ export class BatchService {
       const newBatch = this.getByBatchId(options.id);
 
       console.log(`Result Program: ${JSON.stringify(newBatch)}`);
-      return newBatch;
+      return { success: true, error: newBatch };
     } catch (error) {
       // Reset Batch Id if not used because some error
       await this.resetBatchId();

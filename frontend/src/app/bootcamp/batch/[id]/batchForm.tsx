@@ -88,11 +88,8 @@ export default function BatchForm(props: any) {
           batchTraineeData: selectCandidate,
         }
       }
-      // console.log(`payload: ${JSON.stringify(payload)}`);
-      
+
       dispatch(editBatchReq(payload));
-      dispatch(ResetBatch());
-      router.push('/bootcamp/batch');
     }
   })
 

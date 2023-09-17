@@ -1,9 +1,4 @@
 import { combineReducers } from "redux";
-import CurriculumReducer from "./curriculumReducer";
-import programEntityReducer from "./programEntityReducer";
-import CategoryReducer from "./categoryReducer";
-import SectionReducer from "./sectionReducer";
-import SectionDetailReducer from "./sectionDetailReducer";
 import authReducer from "./users/authReducer";
 import signUpReducer from "./users/signupReducer";
 import usersReducer from "./users/usersReducer";
@@ -16,13 +11,16 @@ import userEducationsReducer from "./users/userEducationsReducer";
 import userExperiencesReducer from "./users/userPhonesReducer copy";
 import JobTypeReducer from "./master/jobTypeReducer";
 import batchReducer from "./bootcamp/batchReducer";
+import programEntityReducer from "./curriculum/programEntityReducer";
+import SectionReducer from "./curriculum/sectionReducer";
+import SectionDetailReducer from "./curriculum/sectionDetailReducer";
 
 const rootReducer = combineReducers({
-    curriculumState: CurriculumReducer,
+    // Curriculum
     programEntityState: programEntityReducer,
-    categoryCurriculumState: CategoryReducer,
     sectionState: SectionReducer,
     sectionDetailReducer: SectionDetailReducer,
+    // Users
     authState: authReducer,
     signupState: signUpReducer,
     usersState: usersReducer,
@@ -32,6 +30,7 @@ const rootReducer = combineReducers({
     userEducationsState: userEducationsReducer,
     userExperiencesState: userExperiencesReducer,
     addressTypeState: addressTypeReducer,
+    // Master
     cityState: cityReducer,
     jobTypeState: JobTypeReducer,
     // Bootcamp

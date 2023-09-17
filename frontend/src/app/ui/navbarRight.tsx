@@ -46,7 +46,7 @@ export default function NavbarRight() {
                             <label className="avatar">
                                 <div className="w-10 mask mask-circle">
                                     {user?.userPhoto === null || user?.userPhoto === '' ? (<>
-                                        <Image src="/userDefault.png" alt={""} layout="fill" objectFit="contain"/>
+                                        <Image src="/userDefault.png" alt={""} width={100} height={100}/>
                                         </>
                                         ) : imageExists ? (
                                             <Image src={`${config.domain}/users/users/profile/photo/${user.userPhoto}`} alt={""} layout="fill" objectFit="contain" onError={handleImageError}/>

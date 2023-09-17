@@ -74,9 +74,9 @@ export class ProgramEntityController {
     return this.Service.Delete(id);
   }
 
-  @Delete('delete_bundle')
-  public async DeleteBundle(@Body() fields: any) {
-    return this.Service.DeleteBundle(fields);
+  @Delete('bulk_delete')
+  public async BulkDelete(@Body() fields: any) {
+    return this.Service.BulkDelete(fields);
   }
 
   @Get('cat&emp')

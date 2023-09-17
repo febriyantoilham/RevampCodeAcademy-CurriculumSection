@@ -63,6 +63,11 @@ import { BatchController } from 'src/bootcamp/batch/batch.controller';
 import { Status } from 'output/entities/Status';
 import { InstructorProgramsService } from 'src/bootcamp/instructorPrograms/instructorPrograms.service';
 import { instructorProgramsController } from 'src/bootcamp/instructorPrograms/instructorPrograms.controller';
+import { StatusService } from 'src/master/status/status.service';
+import { StatusController } from 'src/master/status/status.controller';
+import { ModulesService } from 'src/master/modules/modules.service';
+import { ModulesController } from 'src/master/modules/modules.controller';
+import { Modules } from 'output/entities/Modules';
 
 @Module({
   imports: [
@@ -85,8 +90,9 @@ import { instructorProgramsController } from 'src/bootcamp/instructorPrograms/in
       Roles,
       // HR
       Employee,
-      Status,
       //Master
+      Status,
+      Modules,
       Address,
       AddressType,
       City,
@@ -121,6 +127,8 @@ import { instructorProgramsController } from 'src/bootcamp/instructorPrograms/in
     LocalGuard,
     JwtGuard,
     // Master
+    StatusService,
+    ModulesService,
     AddressTypeService,
     CityService,
     JobTypeService,
@@ -141,6 +149,8 @@ import { instructorProgramsController } from 'src/bootcamp/instructorPrograms/in
     UserEdicationController,
     UserExperiencesController,
     // Master
+    StatusController,
+    ModulesController,
     AddressTypeController,
     CityController,
     JobTypeController,

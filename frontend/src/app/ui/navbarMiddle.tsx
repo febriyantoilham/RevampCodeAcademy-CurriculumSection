@@ -4,8 +4,8 @@ import { usePathname } from "next/navigation";
 export default function NavbarMiddle() {
     const pathname = usePathname();
 
-    const isHomePage = pathname === '/';
-        const programs = [
+    const isHomePage = pathname === '/' || '/programs';
+    const programs = [
         { value: "bootcamp regular" },
         { value: "bootcamp online" },
         { value: "bootcamp corporate" }

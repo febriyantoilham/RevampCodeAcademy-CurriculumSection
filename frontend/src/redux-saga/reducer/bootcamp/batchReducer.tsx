@@ -46,11 +46,13 @@ const batchReducer = (state = INIT_STATE, action: any) => {
             return {
                 ...state,
                 currentSelectedBatch: action.payload,
+                response: null
             }
         case actionType.GET_BATCH_BY_ID_FAIL:
             return {
                 ...state,
                 currentSelectedBatch: null,
+                response: null
             }
         case actionType.BULK_DELETE_BATCH_SUCCESS:
             return {
@@ -79,7 +81,7 @@ const batchReducer = (state = INIT_STATE, action: any) => {
         case actionType.EDIT_BATCH_FAIL:
             return {
                 ...state,
-                response: null,
+                response: action.payload,
             }
         case actionType.CLOSE_BATCH_SUCCESS:
             return {

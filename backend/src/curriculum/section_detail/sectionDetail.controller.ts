@@ -23,9 +23,9 @@ export class SectionDetailController {
     return this.Service.create(file, fields);
   }
 
-  @Get('get/all/:secdSectid')
-  public async getAll(@Param('secdSectid') secdSectid: number) {
-    return this.Service.findAll(secdSectid);
+  @Get('get/all/:sectId')
+  public async getAll(@Param('sectId') sectId: number) {
+    return this.Service.findAll(sectId);
   }
 
   @Get('get/one/:secdId')

@@ -83,7 +83,11 @@ export function* editBatch(action: any): any {
     const { payload } = action;
     try {
         const result = yield call(batch.editBatch, payload);
-        yield put(editBatchSuccess(result));
+        if (result.success){
+            yield put(editBatchSuccess(result));
+        } else {
+            yield put(editBatchFail(result));
+        }
     } catch (error) {
         yield put(editBatchFail(error));
     }

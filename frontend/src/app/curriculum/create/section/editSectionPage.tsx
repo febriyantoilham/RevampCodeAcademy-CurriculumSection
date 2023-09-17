@@ -1,4 +1,4 @@
-import { UpdateSectionRequest } from "@/redux-saga/action/sectionAction";
+import { UpdateSectionRequest } from "@/redux-saga/action/curriculum/sectionAction";
 import { useFormik } from "formik";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -7,6 +7,7 @@ import DeleteSection from "./deleteSectionPage";
 export default function EditSectionPage(props: any) {
     const dispatch = useDispatch();
     const [modal, setModal] = useState(false);
+    const [modalKey, setModalKey] = useState(0);
 
     // Delete Section
     const [deleteAlert, setDeleteAlert] = useState(false);
@@ -15,11 +16,13 @@ export default function EditSectionPage(props: any) {
         if(deleteAlert){
             setDeleteAlert(!deleteAlert);
         }
+        // formik.setValues({sectTitle: '', sectDescription: '',});
         setModal(!modal);
+        setModalKey((key) => key + 1);
     }
     
     const section = props.section
-    const program = props.program
+    const progEntityId = props.progEntityId
     
     const formik = useFormik({
         initialValues: {
@@ -31,44 +34,44 @@ export default function EditSectionPage(props: any) {
         onSubmit: async (values: any) => {
             const data = {
               sectId: section.sectId,
-              progEntityId: program.progEntityId,
+              progEntityId: progEntityId,
               data: {
                 sectTitle: values.sectTitle,
                 sectDescription: values.sectDescription,
               }
             }
             dispatch(UpdateSectionRequest(data));
+            props.setRefresh(false);
+            props.setRefresh(true);
             handleChange();
-            props.alert({ showAlert: true, alertText: 'Waiting...', alertType: 'success'});
-            // props.setRefresh(true);
         },
     });
 
     return (
         <>
-            <button type="button" className="btn btn-ghost btn-sm btn-square" onClick={handleChange}>
+            <button type="button" className="btn btn-ghost btn-sm btn-square" onClick={handleChange} disabled={!props.onEdit}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
             </button>
 
             <input type="checkbox" checked={modal} onChange={handleChange} className="modal-toggle"/>
-            <div className="modal modal-bottom sm:modal-middle">
+            <div className="modal modal-bottom sm:modal-middle" key={modalKey}>
                 <div className="modal-box">
-                    {deleteAlert ? (<DeleteSection setView={handleChange} progId={program.progEntityId} section={section.sectId} setRefresh={props.setRefresh} alert={props.alert}/>
+                    {deleteAlert ? (<DeleteSection setView={handleChange} progEntityId={progEntityId} sectId={section.sectId} setRefresh={props.setRefresh}/>
                     ):(
                         <>
                             <div className="">
-                                <h3 className="font-bold text-lg">
+                                <h3 className="font-medium text-lg">
                                     Section (#{section.sectId})
                                 </h3>
                                 <div className="border-t border-gray-300 my-3"></div>
                                 <div>
                                     <div className="flex flex-col mb-3">
                                         <label htmlFor="sectTitle" className="mb-2 font-medium">Section Name</label>
-                                        <input type="text" id="sectTitle" placeholder="section name" defaultValue={formik.values.sectTitle} onChange={formik.handleChange} className="input input-bordered w-full capitalize"/>
+                                        <input className="input input-bordered w-full capitalize text-base" type="text" id="sectTitle" placeholder="section name" defaultValue={formik.values.sectTitle} onChange={formik.handleChange}/>
                                     </div>
                                     <div className="flex flex-col mb-3">
                                         <label htmlFor="sectDescription" className="mb-2 font-medium">Section Description</label>
-                                        <textarea id="sectDescription" placeholder="section description" defaultValue={formik.values.sectDescription} onChange={formik.handleChange} className="textarea textarea-bordered h-24"/>
+                                        <textarea className="textarea textarea-bordered h-24 text-base" id="sectDescription" placeholder="section description" defaultValue={formik.values.sectDescription} onChange={formik.handleChange}/>
                                     </div>
                                     <div className="modal-action justify-between items-center">
                                         <button type="button" className="btn btn-outline btn-sm btn-error" onClick={() => setDeleteAlert(true)}>
@@ -76,12 +79,8 @@ export default function EditSectionPage(props: any) {
                                             <span>Delete</span>
                                         </button>
                                         <div className="flex justify-end gap-x-2">
-                                            <button type="button" className="btn btn-primary btn-sm" onClick={()=> formik.handleSubmit()}>
-                                            Save
-                                            </button>
-                                            <button type="button" className="btn btn-neutral btn-sm" onClick={handleChange}>
-                                            Cancel
-                                            </button>
+                                            <button type="button" className="btn btn-primary btn-sm" onClick={()=> formik.handleSubmit()}>Save</button>
+                                            <button type="button" className="btn btn-neutral btn-sm" onClick={handleChange}>Cancel</button>
                                         </div>
                                     </div>
                                 </div>

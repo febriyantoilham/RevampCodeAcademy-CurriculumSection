@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { ILike, Like, Repository } from 'typeorm';
 import { ProgramEntity } from 'output/entities/ProgramEntity';
 import { ProgramEntityDescription } from 'output/entities/ProgramEntityDescription';
 import { Sections } from 'output/entities/Sections';
@@ -13,6 +13,13 @@ import { Users } from 'output/entities/Users';
 
 import * as fs from 'fs';
 import * as path from 'path';
+
+interface PaginationOptions {
+  page: number;
+  limit: number;
+  searchValue: string;
+  status: string;
+}
 
 @Injectable()
 export class ProgramEntityService {
@@ -70,7 +77,7 @@ export class ProgramEntityService {
   ): Promise<ProgramEntityInterface> {
     const skippedItems = (options.page - 1) * options.limit;
     let totalCount = await this.serviceProgEntity.count();
-    if (options.name || options.status) {
+    if (options.searchValue || options.status) {
       const program_entity = await this.serviceProgEntity.find({
         relations: [
           'programEntityDescription',
@@ -82,7 +89,7 @@ export class ProgramEntityService {
         skip: skippedItems,
         where: [
           {
-            progTitle: Like(`%${options.name}%`),
+            progTitle: ILike(`%${options.searchValue}%`),
             progLearningType: Like(`%${options.status}%`),
           },
         ],
@@ -93,7 +100,7 @@ export class ProgramEntityService {
       totalCount = await this.serviceProgEntity.count({
         where: [
           {
-            progTitle: Like(`%${options.name}%`),
+            progTitle: Like(`%${options.searchValue}%`),
             progLearningType: Like(`%${options.status}%`),
           },
         ],
@@ -129,18 +136,26 @@ export class ProgramEntityService {
 
   /* Get New progEntityId */
   public async getNewProgEntityId() {
-    const sequenceName = 'curriculum.program_entity_prog_entity_id_seq';
+    try {
+      const sequenceName = 'curriculum.program_entity_prog_entity_id_seq';
 
-    const query = `
-      SELECT SETVAL('${sequenceName}', MAX(prog_entity_id))
-      FROM curriculum.program_entity;
+      // Use parameterized query to prevent SQL injection
+      const query = `
+      SELECT SETVAL($1, COALESCE((SELECT MAX(prog_entity_id) FROM curriculum.program_entity), 0));
     `;
 
-    const currVal = await this.serviceProgEntity.query(query);
+      // Execute the parameterized query
+      const currVal = await this.serviceProgEntity.query(query, [sequenceName]);
 
-    const newProgEntityId = parseInt(currVal[0].setval) + 1;
+      const newProgEntityId = parseInt(currVal[0].setval) + 1;
 
-    return newProgEntityId;
+      console.log('New progEntityId:', newProgEntityId); // Added for debugging
+
+      return { success: true, data: newProgEntityId };
+    } catch (error) {
+      console.error('Error:', error); // Added for debugging
+      return { success: false, result: error.message };
+    }
   }
 
   /* 
@@ -154,7 +169,7 @@ export class ProgramEntityService {
       console.log(`Payload: ${JSON.stringify(fields)}`);
       // Insert ke Table program_entity
 
-      const updateData = {
+      const insertData = {
         progHeadline: fields.progHeadline,
         progTitle: fields.progTitle,
         progType: fields.progType,
@@ -175,7 +190,7 @@ export class ProgramEntityService {
       };
 
       const progEnt = await this.serviceProgEntity.save(
-        file ? { ...updateData, progImage: file.originalname } : updateData,
+        file ? { ...insertData, progImage: file.originalname } : insertData,
       );
 
       // Insert ke Table program_entity_description
@@ -193,6 +208,19 @@ export class ProgramEntityService {
     } catch (error) {
       return error.message;
     }
+  }
+
+  public async findOne(id: number) {
+    const progEntity = await this.serviceProgEntity.findOne({
+      where: { progEntityId: id },
+      relations: [
+        'programEntityDescription',
+        'sections',
+        'sections.sectionDetails',
+        'sections.sectionDetails.sectionDetailMaterials',
+      ],
+    });
+    return progEntity;
   }
 
   public async update(file: any, id: any, fields: any) {
@@ -253,19 +281,6 @@ export class ProgramEntityService {
     }
   }
 
-  public async findOne(id: number) {
-    const progEntity = await this.serviceProgEntity.findOne({
-      where: { progEntityId: id },
-      relations: [
-        'programEntityDescription',
-        'sections',
-        'sections.sectionDetails',
-        'sections.sectionDetails.sectionDetailMaterials',
-      ],
-    });
-    return progEntity;
-  }
-
   public async getImg(imageName: any, res: any) {
     const imagePath = path.join(process.cwd(), 'uploads', imageName);
     try {
@@ -302,49 +317,78 @@ export class ProgramEntityService {
     }
   }
 
-  public async DeleteBundle(fields: any) {
+  public async BulkDelete(fields: any) {
     try {
-      console.log(`Payload: ${JSON.stringify(fields)}`);
+      let totalResult = 0;
+
+      // Loop through the fields (program IDs)
       for (const id of fields) {
+        // Check if the program exists
         const program = await this.serviceProgEntity.findOne({
           where: { progEntityId: id },
         });
 
-        const prog_description = await this.serviceProgEntDesc.findOne({
+        if (!program) {
+          return { success: false, error: `Program with ID ${id} not found!` };
+        }
+
+        // Find program descriptions and delete if they exist
+        const programDescriptions = await this.serviceProgEntDesc.findOne({
           where: { predProgEntityId: id },
         });
 
-        const section = await this.serviceSec.find({
+        if (programDescriptions) {
+          await this.serviceProgEntDesc.delete({ predProgEntityId: id });
+        }
+
+        // Find sections associated with the program
+        const sections = await this.serviceSec.find({
           where: { sectProgEntityId: id },
           relations: ['sectionDetails'],
         });
 
-        for (const item of section) {
-          if (item.sectionDetails.length !== 0) {
-            for (const itemDetail of item.sectionDetails) {
-              const sectDet = await this.serviceSecDet.find({
-                where: { secdId: itemDetail.secdId },
-                relations: ['sectionDetailMaterials'],
-              });
-              for (const itemMaterial of sectDet) {
-                if (itemMaterial.sectionDetailMaterials) {
-                  const sectDetMat = await this.serviceSecDetMat.findOne({
-                    where: { sedmSecdid: itemMaterial.secdId },
-                  });
-                  await this.serviceSecDetMat.remove(sectDetMat);
-                }
+        for (const section of sections) {
+          // Loop through section details
+          for (const itemDetail of section.sectionDetails) {
+            const sectDet = await this.serviceSecDet.find({
+              where: { secdId: itemDetail.secdId },
+              relations: ['sectionDetailMaterials'],
+            });
+
+            // Delete Section Detail Materials
+            for (const itemMaterial of sectDet) {
+              if (itemMaterial.sectionDetailMaterials) {
+                await this.serviceSecDetMat.delete({
+                  sedmSecdid: itemMaterial.secdId,
+                });
               }
-              await this.serviceSecDet.remove(sectDet);
             }
+
+            // Delete Section Details
+            await this.serviceSecDet.delete({ secdId: itemDetail.secdId });
           }
-          await this.serviceSec.remove(section);
+
+          // Delete Sections
+          await this.serviceSec.delete({ sectId: section.sectId });
         }
-        await this.serviceProgEntDesc.remove(prog_description);
-        await this.serviceProgEntity.remove(program);
+
+        // Delete Programs
+        const result = await this.serviceProgEntity.delete({
+          progEntityId: id,
+        });
+
+        if (result.affected === 1) {
+          totalResult++;
+        }
       }
 
-      return { success: true };
+      console.log(`${totalResult} Program(s) Successfully Deleted`);
+      return {
+        success: true,
+        result: `${totalResult} Program(s) Successfully Deleted`,
+      };
     } catch (error) {
+      console.log(`error: ${error.message}`);
       return { success: false, error: error.message };
     }
   }
